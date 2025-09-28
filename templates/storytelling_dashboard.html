@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WOLFIE AGI Storytelling Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        /* ID: [WOLFIE_AGI_UI_STORYTELLING_DASHBOARD_CSS_20250923_001] */
+        /* SUPERPOSITIONALLY: [dream_data_analysis, quantum_tabs, multi_agent_coordination, bridge_crew_tracking, storytelling_dashboard, plotly_timeline, emotional_arcs] */
+        /* DATE: 2025-09-23 */
+        /* TITLE: storytelling_dashboard.html — Storytelling Dashboard Styles */
+        /* WHO: WOLFIE (Eric) - Project Architect & Dream Architect */
+        /* WHAT: CSS styles for the Storytelling Dashboard with Plotly visualizations */
+        /* WHERE: C:\START\WOLFIE_AGI_UI\templates\ */
+        /* WHEN: 2025-09-23, 11:20 AM CDT (Sioux Falls Timezone) */
+        /* WHY: Provide a beautiful interface for dream storytelling and emotional arc visualization */
+        /* HOW: CSS with dark theme and responsive design for Plotly charts */
+        /* HELP: Contact WOLFIE for storytelling dashboard styling or functionality issues */
+        /* AGAPE: Love, patience, kindness, humility in storytelling and visualization */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #4CAF50, #2196F3, #9C27B0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            border-radius: 25px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .nav-tab:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(45deg, #4CAF50, #2196F3);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chart-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #4CAF50;
+            text-align: center;
+        }
+
+        .chart-wrapper {
+            width: 100%;
+            height: 500px;
+            position: relative;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.1em;
+            opacity: 0.8;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2em;
+            opacity: 0.7;
+        }
+
+        .error {
+            text-align: center;
+            padding: 50px;
+            color: #F44336;
+            font-size: 1.2em;
+        }
+
+        .dream-summary {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .dream-summary h3 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+
+        .dream-meta {
+            font-size: 0.9em;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+
+        .emotional-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .emotional-excited { background-color: #4CAF50; }
+        .emotional-happy { background-color: #8BC34A; }
+        .emotional-content { background-color: #CDDC39; }
+        .emotional-neutral { background-color: #FFC107; }
+        .emotional-concerned { background-color: #FF9800; }
+        .emotional-worried { background-color: #FF5722; }
+        .emotional-frustrated { background-color: #F44336; }
+        .emotional-angry { background-color: #E91E63; }
+        .emotional-sad { background-color: #9C27B0; }
+        .emotional-confused { background-color: #607D8B; }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .control-button {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .control-button.active {
+            background: linear-gradient(45deg, #4CAF50, #2196F3);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-wrapper {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <h1>📚 WOLFIE AGI Storytelling Dashboard</h1>
+            <p>Visualizing Dream Narratives and Emotional Journeys</p>
+        </div>
+
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showTab('timeline')">Timeline</div>
+            <div class="nav-tab" onclick="showTab('emotional')">Emotional Arc</div>
+            <div class="nav-tab" onclick="showTab('themes')">Theme Network</div>
+            <div class="nav-tab" onclick="showTab('insights')">Insights</div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="total-dreams">0</div>
+                <div class="stat-label">Total Dreams</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="emotional-range">0</div>
+                <div class="stat-label">Emotional Range</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="active-themes">0</div>
+                <div class="stat-label">Active Themes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="ai-connections">0</div>
+                <div class="stat-label">AI Connections</div>
+            </div>
+        </div>
+
+        <div id="timeline" class="tab-content active">
+            <div class="chart-container">
+                <div class="chart-title">Dream Timeline</div>
+                <div class="controls">
+                    <button class="control-button active" onclick="filterTimeline('all')">All Dreams</button>
+                    <button class="control-button" onclick="filterTimeline('recent')">Recent</button>
+                    <button class="control-button" onclick="filterTimeline('ai')">AI Related</button>
+                </div>
+                <div class="chart-wrapper" id="timeline-chart">
+                    <div class="loading">Loading timeline data...</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="emotional" class="tab-content">
+            <div class="chart-container">
+                <div class="chart-title">Emotional Arc Journey</div>
+                <div class="controls">
+                    <button class="control-button active" onclick="filterEmotional('all')">All Emotions</button>
+                    <button class="control-button" onclick="filterEmotional('positive')">Positive</button>
+                    <button class="control-button" onclick="filterEmotional('negative')">Negative</button>
+                </div>
+                <div class="chart-wrapper" id="emotional-chart">
+                    <div class="loading">Loading emotional arc data...</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="themes" class="tab-content">
+            <div class="chart-container">
+                <div class="chart-title">Theme Network</div>
+                <div class="controls">
+                    <button class="control-button active" onclick="filterThemes('all')">All Themes</button>
+                    <button class="control-button" onclick="filterThemes('frequent')">Most Frequent</button>
+                    <button class="control-button" onclick="filterThemes('recent')">Recent</button>
+                </div>
+                <div class="chart-wrapper" id="themes-chart">
+                    <div class="loading">Loading theme network data...</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="insights" class="tab-content">
+            <div class="chart-container">
+                <div class="chart-title">Dream Insights & Analysis</div>
+                <div id="insights-content">
+                    <div class="loading">Loading insights...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ID: [WOLFIE_AGI_UI_STORYTELLING_DASHBOARD_JS_20250923_001]
+        // SUPERPOSITIONALLY: [dream_data_analysis, quantum_tabs, multi_agent_coordination, bridge_crew_tracking, storytelling_dashboard, plotly_timeline, emotional_arcs]
+        // DATE: 2025-09-23
+        // TITLE: storytelling_dashboard.html — Storytelling Dashboard JavaScript
+        // WHO: WOLFIE (Eric) - Project Architect & Dream Architect
+        // WHAT: JavaScript for Storytelling Dashboard with Plotly visualizations
+        // WHERE: C:\START\WOLFIE_AGI_UI\templates\
+        // WHEN: 2025-09-23, 11:20 AM CDT (Sioux Falls Timezone)
+        // WHY: Enable interactive dream storytelling and emotional arc visualization
+        // HOW: JavaScript with Plotly integration and real-time data loading
+        // HELP: Contact WOLFIE for storytelling dashboard functionality or integration issues
+        // AGAPE: Love, patience, kindness, humility in storytelling and visualization
+
+        let timelineData = [];
+        let emotionalData = [];
+        let themesData = [];
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+        });
+
+        // Load all data
+        async function loadAllData() {
+            try {
+                const [timelineResponse, emotionalResponse, themesResponse] = await Promise.all([
+                    fetch('/api/timeline'),
+                    fetch('/api/emotional_arcs'),
+                    fetch('/api/theme_analysis')
+                ]);
+
+                timelineData = await timelineResponse.json();
+                emotionalData = await emotionalResponse.json();
+                themesData = await themesResponse.json();
+
+                updateStats();
+                createTimelineChart();
+                createEmotionalChart();
+                createThemesChart();
+                createInsights();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showError('Failed to load dashboard data');
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('total-dreams').textContent = timelineData.length;
+            
+            const emotions = emotionalData.map(d => d.emotional_vibe).filter(e => e);
+            const uniqueEmotions = [...new Set(emotions)];
+            document.getElementById('emotional-range').textContent = uniqueEmotions.length;
+            
+            const themes = themesData.length;
+            document.getElementById('active-themes').textContent = themes;
+            
+            const aiConnections = timelineData.filter(d => d.ai_connection && d.ai_connection.trim()).length;
+            document.getElementById('ai-connections').textContent = aiConnections;
+        }
+
+        // Create timeline chart
+        function createTimelineChart() {
+            const chartDiv = document.getElementById('timeline-chart');
+            
+            if (timelineData.length === 0) {
+                chartDiv.innerHTML = '<div class="error">No timeline data available</div>';
+                return;
+            }
+
+            const traces = [];
+            const colors = ['#4CAF50', '#2196F3', '#FF9800', '#9C27B0', '#F44336'];
+
+            timelineData.forEach((dream, index) => {
+                const color = colors[index % colors.length];
+                
+                traces.push({
+                    x: [new Date(dream.date)],
+                    y: [index],
+                    mode: 'markers+text',
+                    marker: {
+                        size: 15,
+                        color: color,
+                        line: { width: 2, color: 'white' }
+                    },
+                    text: [dream.entry_id],
+                    textposition: 'middle center',
+                    textfont: { color: 'white', size: 10 },
+                    name: `Entry ${dream.entry_id}`,
+                    hovertemplate: `
+                        <b>Entry ${dream.entry_id}</b><br>
+                        Date: %{x}<br>
+                        Summary: ${dream.summary.substring(0, 100)}...<br>
+                        Emotional Vibe: ${dream.emotional_vibe}<br>
+                        Tags: ${dream.tags}<br>
+                        <extra></extra>
+                    `
+                });
+            });
+
+            const layout = {
+                title: 'WOLFIE AGI Dream Timeline',
+                xaxis: { 
+                    title: 'Date',
+                    gridcolor: 'rgba(255,255,255,0.1)',
+                    color: 'white'
+                },
+                yaxis: { 
+                    title: 'Dream Entry',
+                    gridcolor: 'rgba(255,255,255,0.1)',
+                    color: 'white'
+                },
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                font: { color: 'white' },
+                showlegend: false,
+                height: 500
+            };
+
+            Plotly.newPlot('timeline-chart', traces, layout);
+        }
+
+        // Create emotional arc chart
+        function createEmotionalChart() {
+            const chartDiv = document.getElementById('emotional-chart');
+            
+            if (emotionalData.length === 0) {
+                chartDiv.innerHTML = '<div class="error">No emotional data available</div>';
+                return;
+            }
+
+            const emotionalMapping = {
+                'excited': 5, 'happy': 4, 'content': 3, 'neutral': 2,
+                'concerned': 1, 'worried': 0, 'frustrated': -1,
+                'angry': -2, 'sad': -3, 'confused': 0
+            };
+
+            const x = emotionalData.map(d => new Date(d.date));
+            const y = emotionalData.map(d => emotionalMapping[d.emotional_vibe] || 0);
+            const text = emotionalData.map(d => d.summary.substring(0, 50) + '...');
+
+            const trace = {
+                x: x,
+                y: y,
+                mode: 'lines+markers',
+                line: { color: '#4CAF50', width: 3 },
+                marker: { size: 8, color: '#4CAF50' },
+                name: 'Emotional Arc',
+                hovertemplate: '<b>%{text}</b><br>Date: %{x}<br>Emotional Score: %{y}<br><extra></extra>',
+                text: text
+            };
+
+            const layout = {
+                title: 'WOLFIE AGI Emotional Arc Journey',
+                xaxis: { 
+                    title: 'Date',
+                    gridcolor: 'rgba(255,255,255,0.1)',
+                    color: 'white'
+                },
+                yaxis: { 
+                    title: 'Emotional Score',
+                    gridcolor: 'rgba(255,255,255,0.1)',
+                    color: 'white',
+                    tickmode: 'linear',
+                    tick0: -3,
+                    dtick: 1
+                },
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                font: { color: 'white' },
+                height: 500,
+                shapes: [
+                    { type: 'rect', x0: 0, x1: 1, y0: 3, y1: 5, fillcolor: 'green', opacity: 0.1, layer: 'below' },
+                    { type: 'rect', x0: 0, x1: 1, y0: 1, y1: 3, fillcolor: 'yellow', opacity: 0.1, layer: 'below' },
+                    { type: 'rect', x0: 0, x1: 1, y0: -1, y1: 1, fillcolor: 'orange', opacity: 0.1, layer: 'below' },
+                    { type: 'rect', x0: 0, x1: 1, y0: -3, y1: -1, fillcolor: 'red', opacity: 0.1, layer: 'below' }
+                ]
+            };
+
+            Plotly.newPlot('emotional-chart', [trace], layout);
+        }
+
+        // Create themes chart
+        function createThemesChart() {
+            const chartDiv = document.getElementById('themes-chart');
+            
+            if (themesData.length === 0) {
+                chartDiv.innerHTML = '<div class="error">No theme data available</div>';
+                return;
+            }
+
+            // Create a simple bar chart for themes
+            const themes = themesData.slice(0, 20); // Top 20 themes
+            const labels = themes.map(t => t.tags || t.themes || 'Unknown');
+            const values = themes.map(t => t.frequency);
+
+            const trace = {
+                x: labels,
+                y: values,
+                type: 'bar',
+                marker: { color: '#4CAF50' }
+            };
+
+            const layout = {
+                title: 'Most Frequent Dream Themes',
+                xaxis: { 
+                    title: 'Themes',
+                    gridcolor: 'rgba(255,255,255,0.1)',
+                    color: 'white'
+                },
+                yaxis: { 
+                    title: 'Frequency',
+                    gridcolor: 'rgba(255,255,255,0.1)',
+                    color: 'white'
+                },
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                font: { color: 'white' },
+                height: 500
+            };
+
+            Plotly.newPlot('themes-chart', [trace], layout);
+        }
+
+        // Create insights
+        function createInsights() {
+            const insightsDiv = document.getElementById('insights-content');
+            
+            if (timelineData.length === 0) {
+                insightsDiv.innerHTML = '<div class="error">No data available for insights</div>';
+                return;
+            }
+
+            const insights = generateInsights();
+            insightsDiv.innerHTML = insights;
+        }
+
+        // Generate insights
+        function generateInsights() {
+            const totalDreams = timelineData.length;
+            const emotions = emotionalData.map(d => d.emotional_vibe).filter(e => e);
+            const emotionCounts = {};
+            emotions.forEach(emotion => {
+                emotionCounts[emotion] = (emotionCounts[emotion] || 0) + 1;
+            });
+            
+            const mostCommonEmotion = Object.keys(emotionCounts).reduce((a, b) => 
+                emotionCounts[a] > emotionCounts[b] ? a : b, 'neutral');
+            
+            const aiRelated = timelineData.filter(d => d.ai_connection && d.ai_connection.trim()).length;
+            const aiPercentage = Math.round((aiRelated / totalDreams) * 100);
+
+            return `
+                <div class="dream-summary">
+                    <h3>📊 Dream Analysis Summary</h3>
+                    <div class="dream-meta">Total Dreams Analyzed: ${totalDreams}</div>
+                    <div class="dream-meta">Most Common Emotional Vibe: <span class="emotional-indicator emotional-${mostCommonEmotion}"></span>${mostCommonEmotion}</div>
+                    <div class="dream-meta">AI-Related Dreams: ${aiRelated} (${aiPercentage}%)</div>
+                </div>
+                
+                <div class="dream-summary">
+                    <h3>🎯 Key Insights</h3>
+                    <div class="dream-meta">• Your dreams show a ${mostCommonEmotion} emotional pattern</div>
+                    <div class="dream-meta">• ${aiPercentage}% of dreams have AI connections</div>
+                    <div class="dream-meta">• Dream frequency: ${Math.round(totalDreams / 30)} dreams per month</div>
+                </div>
+                
+                <div class="dream-summary">
+                    <h3>🔮 Recommendations</h3>
+                    <div class="dream-meta">• Focus on ${mostCommonEmotion} dreams for deeper analysis</div>
+                    <div class="dream-meta">• Explore AI connections in ${aiPercentage}% of your dreams</div>
+                    <div class="dream-meta">• Continue logging dreams for pattern recognition</div>
+                </div>
+            `;
+        }
+
+        // Tab switching
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Filter functions
+        function filterTimeline(filter) {
+            console.log('Filtering timeline:', filter);
+            // Implement timeline filtering
+        }
+
+        function filterEmotional(filter) {
+            console.log('Filtering emotional:', filter);
+            // Implement emotional filtering
+        }
+
+        function filterThemes(filter) {
+            console.log('Filtering themes:', filter);
+            // Implement theme filtering
+        }
+
+        // Error handling
+        function showError(message) {
+            document.querySelectorAll('.loading').forEach(el => {
+                el.innerHTML = `<div class="error">${message}</div>`;
+            });
+        }
+    </script>
+</body>
+</html>

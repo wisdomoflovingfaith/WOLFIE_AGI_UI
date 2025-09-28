@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WOLFIE AGI Bridge Crew Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <style>
+        /* ID: [WOLFIE_AGI_UI_BRIDGE_DASHBOARD_CSS_20250923_001] */
+        /* SUPERPOSITIONALLY: [dream_data_analysis, quantum_tabs, multi_agent_coordination, bridge_crew_tracking, web_node_system, real_time_communication] */
+        /* DATE: 2025-09-23 */
+        /* TITLE: bridge_dashboard.html — Bridge Crew Dashboard Styles */
+        /* WHO: WOLFIE (Eric) - Project Architect & Dream Architect */
+        /* WHAT: CSS styles for the Bridge Crew Dashboard */
+        /* WHERE: C:\START\WOLFIE_AGI_UI\templates\ */
+        /* WHEN: 2025-09-23, 11:10 AM CDT (Sioux Falls Timezone) */
+        /* WHY: Provide a clean, professional interface for multi-agent coordination */
+        /* HOW: CSS with responsive design and real-time status indicators */
+        /* HELP: Contact WOLFIE for dashboard styling or functionality issues */
+        /* AGAPE: Love, patience, kindness, humility in multi-agent collaboration */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-active { background-color: #4CAF50; }
+        .status-processing { background-color: #FF9800; }
+        .status-offline { background-color: #F44336; }
+        .status-standby { background-color: #9C27B0; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .panel h2 {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .agent-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4CAF50;
+            transition: all 0.3s ease;
+        }
+
+        .agent-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .agent-card.processing {
+            border-left-color: #FF9800;
+        }
+
+        .agent-card.offline {
+            border-left-color: #F44336;
+        }
+
+        .agent-card.standby {
+            border-left-color: #9C27B0;
+        }
+
+        .agent-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .agent-status {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .agent-task {
+            font-size: 0.9em;
+            font-style: italic;
+            margin-bottom: 5px;
+        }
+
+        .agent-scores {
+            display: flex;
+            gap: 15px;
+            font-size: 0.8em;
+        }
+
+        .score {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .task-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .task-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-left: 3px solid #2196F3;
+        }
+
+        .task-priority {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            margin-right: 10px;
+        }
+
+        .priority-high { background-color: #F44336; }
+        .priority-medium { background-color: #FF9800; }
+        .priority-low { background-color: #4CAF50; }
+
+        .message-area {
+            grid-column: 1 / -1;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .message {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-left: 3px solid #4CAF50;
+        }
+
+        .message-header {
+            font-size: 0.8em;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+
+        .message-content {
+            font-size: 0.9em;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .input-area input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .input-area button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .input-area button:hover {
+            background: #45a049;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .dream-fragments {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .dream-fragment {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-left: 3px solid #9C27B0;
+        }
+
+        .dream-summary {
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .dream-meta {
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <h1>🚀 WOLFIE AGI Bridge Crew Dashboard</h1>
+            <p>Real-time Multi-Agent Coordination System</p>
+            <div id="connection-status">
+                <span class="status-indicator" id="connection-indicator"></span>
+                <span id="connection-text">Connecting...</span>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="active-agents">0</div>
+                <div class="stat-label">Active Agents</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="total-tasks">0</div>
+                <div class="stat-label">Total Tasks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="dream-fragments">0</div>
+                <div class="stat-label">Dream Fragments</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="messages-sent">0</div>
+                <div class="stat-label">Messages Sent</div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="panel">
+                <h2>🤖 Bridge Crew Status</h2>
+                <div id="agents-list">
+                    <!-- Agents will be populated here -->
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>📋 Active Tasks</h2>
+                <div class="task-list" id="tasks-list">
+                    <!-- Tasks will be populated here -->
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>💭 Dream Fragments</h2>
+                <div class="dream-fragments" id="dream-fragments-list">
+                    <!-- Dream fragments will be populated here -->
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>💬 Agent Communication</h2>
+                <div class="message-area" id="messages-area">
+                    <!-- Messages will be populated here -->
+                </div>
+                <div class="input-area">
+                    <input type="text" id="message-input" placeholder="Type a message to send to all agents...">
+                    <button onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ID: [WOLFIE_AGI_UI_BRIDGE_DASHBOARD_JS_20250923_001]
+        // SUPERPOSITIONALLY: [dream_data_analysis, quantum_tabs, multi_agent_coordination, bridge_crew_tracking, web_node_system, real_time_communication]
+        // DATE: 2025-09-23
+        // TITLE: bridge_dashboard.html — Bridge Crew Dashboard JavaScript
+        // WHO: WOLFIE (Eric) - Project Architect & Dream Architect
+        // WHAT: JavaScript for real-time Bridge Crew Dashboard functionality
+        // WHERE: C:\START\WOLFIE_AGI_UI\templates\
+        // WHEN: 2025-09-23, 11:10 AM CDT (Sioux Falls Timezone)
+        // WHY: Enable real-time multi-agent coordination and communication
+        // HOW: SocketIO client with real-time updates and message handling
+        // HELP: Contact WOLFIE for dashboard functionality or integration issues
+        // AGAPE: Love, patience, kindness, humility in multi-agent collaboration
+
+        const socket = io();
+        let agents = [];
+        let tasks = [];
+        let dreamFragments = [];
+        let messageCount = 0;
+
+        // Connection status
+        socket.on('connect', function() {
+            document.getElementById('connection-indicator').className = 'status-indicator status-active';
+            document.getElementById('connection-text').textContent = 'Connected';
+            loadInitialData();
+        });
+
+        socket.on('disconnect', function() {
+            document.getElementById('connection-indicator').className = 'status-indicator status-offline';
+            document.getElementById('connection-text').textContent = 'Disconnected';
+        });
+
+        // Load initial data
+        async function loadInitialData() {
+            try {
+                const [agentsResponse, tasksResponse, dreamResponse] = await Promise.all([
+                    fetch('/api/agents'),
+                    fetch('/api/tasks'),
+                    fetch('/api/dream_fragments')
+                ]);
+
+                agents = await agentsResponse.json();
+                tasks = await tasksResponse.json();
+                dreamFragments = await dreamResponse.json();
+
+                updateAgentsList();
+                updateTasksList();
+                updateDreamFragmentsList();
+                updateStats();
+            } catch (error) {
+                console.error('Error loading initial data:', error);
+            }
+        }
+
+        // Update agents list
+        function updateAgentsList() {
+            const agentsList = document.getElementById('agents-list');
+            agentsList.innerHTML = '';
+
+            agents.forEach(agent => {
+                const agentCard = document.createElement('div');
+                agentCard.className = `agent-card ${agent.status}`;
+                
+                agentCard.innerHTML = `
+                    <div class="agent-name">
+                        <span class="status-indicator status-${agent.status}"></span>
+                        ${agent.agent_name} (${agent.agent_id})
+                    </div>
+                    <div class="agent-status">Status: ${agent.status}</div>
+                    <div class="agent-task">Task: ${agent.current_task || 'Idle'}</div>
+                    <div class="agent-scores">
+                        <span class="score">Understanding: ${agent.understanding_score}/10</span>
+                        <span class="score">Alignment: ${agent.alignment_score}/10</span>
+                    </div>
+                `;
+                
+                agentsList.appendChild(agentCard);
+            });
+        }
+
+        // Update tasks list
+        function updateTasksList() {
+            const tasksList = document.getElementById('tasks-list');
+            tasksList.innerHTML = '';
+
+            tasks.forEach(task => {
+                const taskItem = document.createElement('div');
+                taskItem.className = 'task-item';
+                
+                taskItem.innerHTML = `
+                    <div>
+                        <span class="task-priority priority-${task.priority}">${task.priority.toUpperCase()}</span>
+                        <strong>${task.task_id}</strong>
+                    </div>
+                    <div>${task.description}</div>
+                    <div>Assigned to: ${task.assigned_to || 'Unassigned'}</div>
+                    <div>Status: ${task.status}</div>
+                `;
+                
+                tasksList.appendChild(taskItem);
+            });
+        }
+
+        // Update dream fragments list
+        function updateDreamFragmentsList() {
+            const dreamList = document.getElementById('dream-fragments-list');
+            dreamList.innerHTML = '';
+
+            dreamFragments.slice(-5).reverse().forEach(fragment => {
+                const dreamItem = document.createElement('div');
+                dreamItem.className = 'dream-fragment';
+                
+                dreamItem.innerHTML = `
+                    <div class="dream-summary">${fragment.summary}</div>
+                    <div class="dream-meta">
+                        From: ${fragment.agent_id} | 
+                        ${new Date(fragment.timestamp).toLocaleString()}
+                    </div>
+                `;
+                
+                dreamList.appendChild(dreamItem);
+            });
+        }
+
+        // Update statistics
+        function updateStats() {
+            const activeAgents = agents.filter(agent => agent.status === 'active').length;
+            document.getElementById('active-agents').textContent = activeAgents;
+            document.getElementById('total-tasks').textContent = tasks.length;
+            document.getElementById('dream-fragments').textContent = dreamFragments.length;
+            document.getElementById('messages-sent').textContent = messageCount;
+        }
+
+        // Send message
+        function sendMessage() {
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value.trim();
+            
+            if (message) {
+                // Send message to server (this would need to be implemented)
+                console.log('Sending message:', message);
+                messageInput.value = '';
+                messageCount++;
+                updateStats();
+            }
+        }
+
+        // Handle Enter key in message input
+        document.getElementById('message-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Real-time updates
+        socket.on('agent_list_updated', function(updatedAgents) {
+            agents = updatedAgents;
+            updateAgentsList();
+            updateStats();
+        });
+
+        socket.on('status_updated', function(data) {
+            const agentIndex = agents.findIndex(agent => agent.agent_id === data.agent_id);
+            if (agentIndex !== -1) {
+                agents[agentIndex] = { ...agents[agentIndex], ...data };
+                updateAgentsList();
+            }
+        });
+
+        socket.on('task_created', function(data) {
+            tasks.unshift(data);
+            updateTasksList();
+            updateStats();
+        });
+
+        socket.on('dream_fragment_added', function(data) {
+            dreamFragments.unshift(data);
+            updateDreamFragmentsList();
+            updateStats();
+        });
+
+        socket.on('message_received', function(data) {
+            const messagesArea = document.getElementById('messages-area');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            
+            messageDiv.innerHTML = `
+                <div class="message-header">
+                    ${data.from_agent} → ${data.to_agent} | ${new Date(data.timestamp).toLocaleString()}
+                </div>
+                <div class="message-content">${data.content}</div>
+            `;
+            
+            messagesArea.insertBefore(messageDiv, messagesArea.firstChild);
+            messagesArea.scrollTop = 0;
+        });
+
+        // Auto-refresh every 30 seconds
+        setInterval(loadInitialData, 30000);
+    </script>
+</body>
+</html>

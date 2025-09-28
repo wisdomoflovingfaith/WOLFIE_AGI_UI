@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WOLFIE AGI Mobile Sync Dashboard</title>
+    <style>
+        /* ID: [WOLFIE_AGI_UI_MOBILE_DASHBOARD_CSS_20250923_001] */
+        /* SUPERPOSITIONALLY: [dream_data_analysis, quantum_tabs, multi_agent_coordination, bridge_crew_tracking, mobile_sync, text_based_input, deepseek_replacement] */
+        /* DATE: 2025-09-23 */
+        /* TITLE: mobile_dashboard.html — Mobile Sync Dashboard Styles */
+        /* WHO: WOLFIE (Eric) - Project Architect & Dream Architect */
+        /* WHAT: CSS styles for the Mobile Sync Dashboard (DEEPSEEK replacement) */
+        /* WHERE: C:\START\WOLFIE_AGI_UI\templates\ */
+        /* WHEN: 2025-09-23, 11:30 AM CDT (Sioux Falls Timezone) */
+        /* WHY: Provide a mobile-optimized interface for dream fragment capture and sync */
+        /* HOW: CSS with mobile-first design and responsive layout */
+        /* HELP: Contact WOLFIE for mobile dashboard styling or functionality issues */
+        /* AGAPE: Love, patience, kindness, humility in mobile development */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .mobile-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            color: #4CAF50;
+        }
+
+        .header p {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .status-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-connected { background-color: #4CAF50; }
+        .status-disconnected { background-color: #F44336; }
+        .status-syncing { background-color: #FF9800; }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #4CAF50;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .form-textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #2196F3, #1976D2);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #F44336, #D32F2F);
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+        }
+
+        .dream-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .dream-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .dream-summary {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #4CAF50;
+        }
+
+        .dream-meta {
+            font-size: 0.9em;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+
+        .sync-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .sync-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .sync-count {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            opacity: 0.7;
+        }
+
+        .error {
+            text-align: center;
+            padding: 20px;
+            color: #F44336;
+            background: rgba(244, 67, 54, 0.1);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .success {
+            text-align: center;
+            padding: 20px;
+            color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .device-info {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .device-name {
+            font-weight: 500;
+            color: #4CAF50;
+            margin-bottom: 5px;
+        }
+
+        .device-id {
+            font-size: 0.9em;
+            opacity: 0.7;
+            font-family: monospace;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .mobile-container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .form-input, .form-textarea {
+                font-size: 16px; /* Prevent zoom on iOS */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <div class="header">
+            <h1>📱 WOLFIE AGI Mobile Sync</h1>
+            <p>Dream Fragment Capture & Sync (DEEPSEEK Replacement)</p>
+        </div>
+
+        <div id="device-setup" class="status-card">
+            <h2>Device Setup</h2>
+            <div class="form-group">
+                <label class="form-label" for="device-name">Device Name</label>
+                <input type="text" id="device-name" class="form-input" placeholder="Enter your device name">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="device-type">Device Type</label>
+                <select id="device-type" class="form-input">
+                    <option value="mobile">Mobile Phone</option>
+                    <option value="tablet">Tablet</option>
+                    <option value="laptop">Laptop</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <button class="btn" onclick="registerDevice()">Register Device</button>
+        </div>
+
+        <div id="device-info" class="device-info hidden">
+            <div class="device-name" id="display-device-name">Device Name</div>
+            <div class="device-id" id="display-device-id">Device ID</div>
+        </div>
+
+        <div id="sync-status" class="status-card hidden">
+            <div class="sync-status">
+                <div class="sync-info">
+                    <span class="status-indicator" id="sync-indicator"></span>
+                    <span id="sync-text">Checking sync status...</span>
+                </div>
+                <div class="sync-count" id="pending-count">0 pending</div>
+            </div>
+            <button class="btn btn-secondary" onclick="checkSyncStatus()">Refresh Status</button>
+            <button class="btn btn-secondary" onclick="processFragments()">Process Fragments</button>
+        </div>
+
+        <div id="dream-form" class="status-card hidden">
+            <h2>Submit Dream Fragment</h2>
+            <div class="form-group">
+                <label class="form-label" for="dream-summary">Dream Summary</label>
+                <textarea id="dream-summary" class="form-textarea" placeholder="Describe your dream fragment..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="dream-symbols">Symbols</label>
+                <input type="text" id="dream-symbols" class="form-input" placeholder="e.g., pop-up book, tabs, quantum">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="dream-themes">Themes</label>
+                <input type="text" id="dream-themes" class="form-input" placeholder="e.g., interface design, coordination">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="dream-emotion">Emotional Vibe</label>
+                <select id="dream-emotion" class="form-input">
+                    <option value="excited">Excited</option>
+                    <option value="happy">Happy</option>
+                    <option value="content">Content</option>
+                    <option value="neutral">Neutral</option>
+                    <option value="concerned">Concerned</option>
+                    <option value="worried">Worried</option>
+                    <option value="frustrated">Frustrated</option>
+                    <option value="angry">Angry</option>
+                    <option value="sad">Sad</option>
+                    <option value="confused">Confused</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="dream-ai-connection">AI Connection</label>
+                <input type="text" id="dream-ai-connection" class="form-input" placeholder="How does this relate to AI development?">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="dream-tags">Tags</label>
+                <input type="text" id="dream-tags" class="form-input" placeholder="e.g., #quantum #interface #coordination">
+            </div>
+            <button class="btn" onclick="submitDream()">Submit Dream Fragment</button>
+        </div>
+
+        <div id="recent-dreams" class="status-card hidden">
+            <h2>Recent Dreams</h2>
+            <button class="btn btn-secondary" onclick="loadRecentDreams()">Load Recent Dreams</button>
+            <div class="dream-list" id="dream-list">
+                <div class="loading">Click "Load Recent Dreams" to see your dream history</div>
+            </div>
+        </div>
+
+        <div id="message-area"></div>
+    </div>
+
+    <script>
+        // ID: [WOLFIE_AGI_UI_MOBILE_DASHBOARD_JS_20250923_001]
+        // SUPERPOSITIONALLY: [dream_data_analysis, quantum_tabs, multi_agent_coordination, bridge_crew_tracking, mobile_sync, text_based_input, deepseek_replacement]
+        // DATE: 2025-09-23
+        // TITLE: mobile_dashboard.html — Mobile Sync Dashboard JavaScript
+        // WHO: WOLFIE (Eric) - Project Architect & Dream Architect
+        // WHAT: JavaScript for Mobile Sync Dashboard functionality
+        // WHERE: C:\START\WOLFIE_AGI_UI\templates\
+        // WHEN: 2025-09-23, 11:30 AM CDT (Sioux Falls Timezone)
+        // WHY: Enable mobile dream fragment capture and sync functionality
+        // HOW: JavaScript with mobile-optimized UI and API integration
+        // HELP: Contact WOLFIE for mobile dashboard functionality or integration issues
+        // AGAPE: Love, patience, kindness, humility in mobile development
+
+        let deviceId = null;
+        let syncToken = null;
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if device is already registered
+            const savedDeviceId = localStorage.getItem('deviceId');
+            const savedSyncToken = localStorage.getItem('syncToken');
+            
+            if (savedDeviceId && savedSyncToken) {
+                deviceId = savedDeviceId;
+                syncToken = savedSyncToken;
+                showRegisteredState();
+            }
+        });
+
+        // Register device
+        async function registerDevice() {
+            const deviceName = document.getElementById('device-name').value;
+            const deviceType = document.getElementById('device-type').value;
+            
+            if (!deviceName.trim()) {
+                showMessage('Please enter a device name', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/mobile/api/register_device', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        device_name: deviceName,
+                        device_type: deviceType
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    deviceId = data.device_id;
+                    syncToken = data.sync_token;
+                    
+                    // Save to localStorage
+                    localStorage.setItem('deviceId', deviceId);
+                    localStorage.setItem('syncToken', syncToken);
+                    
+                    showMessage('Device registered successfully!', 'success');
+                    showRegisteredState();
+                } else {
+                    showMessage('Error registering device: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showMessage('Error connecting to server: ' + error.message, 'error');
+            }
+        }
+
+        // Show registered state
+        function showRegisteredState() {
+            document.getElementById('device-setup').classList.add('hidden');
+            document.getElementById('device-info').classList.remove('hidden');
+            document.getElementById('sync-status').classList.remove('hidden');
+            document.getElementById('dream-form').classList.remove('hidden');
+            document.getElementById('recent-dreams').classList.remove('hidden');
+            
+            document.getElementById('display-device-name').textContent = document.getElementById('device-name').value || 'Unknown Device';
+            document.getElementById('display-device-id').textContent = deviceId;
+            
+            checkSyncStatus();
+        }
+
+        // Check sync status
+        async function checkSyncStatus() {
+            if (!deviceId || !syncToken) {
+                showMessage('Device not registered', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/mobile/api/sync_status?device_id=${deviceId}&sync_token=${syncToken}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('sync-indicator').className = 'status-indicator status-connected';
+                    document.getElementById('sync-text').textContent = 'Connected';
+                    document.getElementById('pending-count').textContent = `${data.pending_fragments} pending`;
+                } else {
+                    document.getElementById('sync-indicator').className = 'status-indicator status-disconnected';
+                    document.getElementById('sync-text').textContent = 'Disconnected';
+                    showMessage('Error checking sync status: ' + data.error, 'error');
+                }
+            } catch (error) {
+                document.getElementById('sync-indicator').className = 'status-indicator status-disconnected';
+                document.getElementById('sync-text').textContent = 'Disconnected';
+                showMessage('Error connecting to server: ' + error.message, 'error');
+            }
+        }
+
+        // Submit dream fragment
+        async function submitDream() {
+            if (!deviceId || !syncToken) {
+                showMessage('Device not registered', 'error');
+                return;
+            }
+            
+            const dreamData = {
+                device_id: deviceId,
+                sync_token: syncToken,
+                summary: document.getElementById('dream-summary').value,
+                symbols: document.getElementById('dream-symbols').value,
+                themes: document.getElementById('dream-themes').value,
+                emotional_vibe: document.getElementById('dream-emotion').value,
+                ai_connection: document.getElementById('dream-ai-connection').value,
+                tags: document.getElementById('dream-tags').value
+            };
+            
+            if (!dreamData.summary.trim()) {
+                showMessage('Please enter a dream summary', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/mobile/api/submit_dream', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dreamData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('Dream fragment submitted successfully!', 'success');
+                    clearForm();
+                    checkSyncStatus();
+                } else {
+                    showMessage('Error submitting dream: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showMessage('Error connecting to server: ' + error.message, 'error');
+            }
+        }
+
+        // Process fragments
+        async function processFragments() {
+            if (!deviceId || !syncToken) {
+                showMessage('Device not registered', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/mobile/api/process_fragments', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        device_id: deviceId,
+                        sync_token: syncToken
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage(`Processed ${data.processed_count} fragments successfully!`, 'success');
+                    checkSyncStatus();
+                } else {
+                    showMessage('Error processing fragments: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showMessage('Error connecting to server: ' + error.message, 'error');
+            }
+        }
+
+        // Load recent dreams
+        async function loadRecentDreams() {
+            if (!deviceId || !syncToken) {
+                showMessage('Device not registered', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/mobile/api/get_dreams?device_id=${deviceId}&sync_token=${syncToken}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    displayDreams(data);
+                } else {
+                    showMessage('Error loading dreams: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showMessage('Error connecting to server: ' + error.message, 'error');
+            }
+        }
+
+        // Display dreams
+        function displayDreams(dreams) {
+            const dreamList = document.getElementById('dream-list');
+            
+            if (dreams.length === 0) {
+                dreamList.innerHTML = '<div class="loading">No dreams found</div>';
+                return;
+            }
+            
+            dreamList.innerHTML = dreams.map(dream => `
+                <div class="dream-item">
+                    <div class="dream-summary">${dream.summary}</div>
+                    <div class="dream-meta">Entry: ${dream.entry_id}</div>
+                    <div class="dream-meta">Date: ${new Date(dream.date).toLocaleString()}</div>
+                    <div class="dream-meta">Emotion: ${dream.emotional_vibe}</div>
+                    <div class="dream-meta">Tags: ${dream.tags}</div>
+                </div>
+            `).join('');
+        }
+
+        // Clear form
+        function clearForm() {
+            document.getElementById('dream-summary').value = '';
+            document.getElementById('dream-symbols').value = '';
+            document.getElementById('dream-themes').value = '';
+            document.getElementById('dream-emotion').value = 'neutral';
+            document.getElementById('dream-ai-connection').value = '';
+            document.getElementById('dream-tags').value = '';
+        }
+
+        // Show message
+        function showMessage(message, type) {
+            const messageArea = document.getElementById('message-area');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type;
+            messageDiv.textContent = message;
+            messageArea.appendChild(messageDiv);
+            
+            // Remove message after 5 seconds
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        // Auto-refresh sync status every 30 seconds
+        setInterval(checkSyncStatus, 30000);
+    </script>
+</body>
+</html>

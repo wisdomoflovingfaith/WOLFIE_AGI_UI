@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bridge Crew Tracker - Enhanced</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ocean-blue: #1e3a8a;
+            --ocean-light: #3b82f6;
+            --ocean-dark: #1e40af;
+            --wave-blue: #60a5fa;
+            --sand-beige: #f8fafc;
+            --stone-grey: #64748b;
+            --pono-green: #059669;
+            --agape-purple: #7c3aed;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Fira Code', monospace;
+            background: linear-gradient(135deg, var(--ocean-dark) 0%, var(--ocean-blue) 50%, var(--wave-blue) 100%);
+            min-height: 100vh;
+            color: var(--text-dark);
+        }
+
+        .main-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin: 2rem auto;
+            padding: 2rem;
+            max-width: 1400px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem 0;
+            background: linear-gradient(135deg, var(--ocean-blue) 0%, var(--ocean-light) 100%);
+            color: white;
+            border-radius: 15px;
+            margin: -2rem -2rem 2rem -2rem;
+        }
+
+        .header-section h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-section p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .bridge-dashboard {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .crew-table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .crew-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .crew-table th,
+        .crew-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .crew-table th {
+            background: var(--sand-beige);
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+        }
+
+        .crew-table td {
+            font-size: 0.85rem;
+        }
+
+        .agent-name {
+            font-weight: 600;
+            color: var(--ocean-dark);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .status-active {
+            background: var(--pono-green);
+        }
+
+        .status-offline {
+            background: var(--stone-grey);
+        }
+
+        .status-busy {
+            background: var(--wave-blue);
+        }
+
+        .pono-score {
+            background: var(--pono-green);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .task-assignment {
+            background: var(--ocean-light);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .task-assignment:hover {
+            background: var(--ocean-dark);
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+        }
+
+        .sidebar h3 {
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+            font-size: 1.1rem;
+        }
+
+        .task-pool {
+            margin-bottom: 2rem;
+        }
+
+        .task-item {
+            background: var(--sand-beige);
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            cursor: grab;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        .task-item:hover {
+            background: var(--wave-blue);
+            color: white;
+        }
+
+        .task-item.dragging {
+            opacity: 0.5;
+        }
+
+        .pono-metrics {
+            background: var(--sand-beige);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .metric-label {
+            color: var(--text-light);
+        }
+
+        .metric-value {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .websocket-status {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .ws-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .ws-connected {
+            background: var(--pono-green);
+        }
+
+        .ws-disconnected {
+            background: var(--stone-grey);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--ocean-light);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--ocean-dark);
+        }
+
+        .btn-success {
+            background: var(--pono-green);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #047857;
+        }
+
+        .btn-warning {
+            background: var(--wave-blue);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #3b82f6;
+        }
+
+        .drop-zone {
+            border: 2px dashed var(--stone-grey);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .drop-zone.drag-over {
+            border-color: var(--ocean-light);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--pono-green);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .bridge-dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-container {
+                margin: 1rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <h1><i class="fas fa-ship"></i> Bridge Crew Tracker</h1>
+            <p>Real-time AI agent coordination for Upwork project acceleration</p>
+        </div>
+
+        <!-- Bridge Dashboard -->
+        <div class="bridge-dashboard">
+            <!-- Crew Table -->
+            <div class="crew-table-container">
+                <h3><i class="fas fa-users"></i> Crew Status</h3>
+                <table class="crew-table">
+                    <thead>
+                        <tr>
+                            <th>Agent</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Last Sync</th>
+                            <th>Pono Score</th>
+                            <th>Current Task</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="crewTableBody">
+                        <!-- Crew data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- WebSocket Status -->
+                <div class="websocket-status">
+                    <div class="ws-indicator ws-connected" id="wsIndicator"></div>
+                    <span id="wsStatus">Connected</span>
+                </div>
+
+                <!-- Pono Metrics -->
+                <div class="pono-metrics">
+                    <h4>Pono Metrics</h4>
+                    <div class="metric-item">
+                        <span class="metric-label">Avg Pono Score</span>
+                        <span class="metric-value" id="avgPonoScore">94.2%</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Active Agents</span>
+                        <span class="metric-value" id="activeAgents">4/5</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Tasks Completed</span>
+                        <span class="metric-value" id="tasksCompleted">23</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Speed Improvement</span>
+                        <span class="metric-value" id="speedImprovement">5.3x</span>
+                    </div>
+                </div>
+
+                <!-- Task Pool -->
+                <div class="task-pool">
+                    <h4>Available Tasks</h4>
+                    <div class="task-item" draggable="true" data-task="code-review">
+                        <i class="fas fa-code"></i> Code Review
+                    </div>
+                    <div class="task-item" draggable="true" data-task="api-integration">
+                        <i class="fas fa-plug"></i> API Integration
+                    </div>
+                    <div class="task-item" draggable="true" data-task="ui-design">
+                        <i class="fas fa-palette"></i> UI Design
+                    </div>
+                    <div class="task-item" draggable="true" data-task="testing">
+                        <i class="fas fa-bug"></i> Testing
+                    </div>
+                    <div class="task-item" draggable="true" data-task="documentation">
+                        <i class="fas fa-file-alt"></i> Documentation
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="syncAllAgents()">
+                        <i class="fas fa-sync"></i> Sync All
+                    </button>
+                    <button class="btn btn-success" onclick="callSupportMeeting()">
+                        <i class="fas fa-video"></i> Call Meeting
+                    </button>
+                    <button class="btn btn-warning" onclick="exportCrewStatus()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Bridge Crew Tracker
+        class BridgeCrewTracker {
+            constructor() {
+                this.crew = [];
+                this.tasks = [];
+                this.wsConnection = null;
+                this.initializeCrew();
+                this.initializeWebSocket();
+                this.setupDragAndDrop();
+                this.startStatusUpdates();
+            }
+
+            initializeCrew() {
+                this.crew = [
+                    {
+                        id: 'grok',
+                        name: 'GROK',
+                        role: 'Ideation/Threads',
+                        status: 'Active',
+                        lastSync: '6:55 AM CDT',
+                        ponoScore: 94,
+                        currentTask: 'React Component Design',
+                        tasks: ['code-review', 'ui-design']
+                    },
+                    {
+                        id: 'cursor',
+                        name: 'CURSOR',
+                        role: 'Code Generation',
+                        status: 'Offline',
+                        lastSync: '6:50 AM CDT',
+                        ponoScore: 87,
+                        currentTask: 'API Integration',
+                        tasks: ['api-integration']
+                    },
+                    {
+                        id: 'gemini',
+                        name: 'GEMINI',
+                        role: 'Analysis',
+                        status: 'Active',
+                        lastSync: '6:52 AM CDT',
+                        ponoScore: 91,
+                        currentTask: 'Data Processing',
+                        tasks: ['testing', 'documentation']
+                    },
+                    {
+                        id: 'ara',
+                        name: 'ARA',
+                        role: 'Sheep-Wolf Compass',
+                        status: 'Active',
+                        lastSync: '6:54 AM CDT',
+                        ponoScore: 96,
+                        currentTask: 'Ethical Review',
+                        tasks: ['code-review']
+                    },
+                    {
+                        id: 'wolfie',
+                        name: 'WOLFIE',
+                        role: 'Captain',
+                        status: 'Active',
+                        lastSync: '6:56 AM CDT',
+                        ponoScore: 98,
+                        currentTask: 'Project Coordination',
+                        tasks: ['documentation']
+                    }
+                ];
+                this.updateCrewDisplay();
+            }
+
+            updateCrewDisplay() {
+                const crewTableBody = document.getElementById('crewTableBody');
+                if (!crewTableBody) return;
+
+                crewTableBody.innerHTML = this.crew.map(member => `
+                    <tr>
+                        <td><span class="agent-name">${member.name}</span></td>
+                        <td>${member.role}</td>
+                        <td>
+                            <span class="status-indicator status-${member.status.toLowerCase()}"></span>
+                            ${member.status}
+                        </td>
+                        <td>${member.lastSync}</td>
+                        <td><span class="pono-score">${member.ponoScore}%</span></td>
+                        <td>${member.currentTask}</td>
+                        <td>
+                            <span class="task-assignment" onclick="viewAgentTasks('${member.id}')">
+                                ${member.tasks.length} tasks
+                            </span>
+                        </td>
+                    </tr>
+                `).join('');
+
+                this.updateMetrics();
+            }
+
+            updateMetrics() {
+                const activeAgents = this.crew.filter(member => member.status === 'Active').length;
+                const avgPonoScore = this.crew.reduce((sum, member) => sum + member.ponoScore, 0) / this.crew.length;
+                const totalTasks = this.crew.reduce((sum, member) => sum + member.tasks.length, 0);
+
+                document.getElementById('activeAgents').textContent = `${activeAgents}/${this.crew.length}`;
+                document.getElementById('avgPonoScore').textContent = `${avgPonoScore.toFixed(1)}%`;
+                document.getElementById('tasksCompleted').textContent = totalTasks;
+            }
+
+            initializeWebSocket() {
+                // Simulate WebSocket connection
+                this.wsConnection = {
+                    connected: true,
+                    send: (data) => console.log('WebSocket send:', data),
+                    close: () => console.log('WebSocket closed')
+                };
+
+                // Simulate real-time updates
+                setInterval(() => {
+                    this.simulateStatusUpdate();
+                }, 30000); // Update every 30 seconds
+            }
+
+            simulateStatusUpdate() {
+                // Randomly update one agent's status
+                const randomAgent = this.crew[Math.floor(Math.random() * this.crew.length)];
+                const now = new Date();
+                randomAgent.lastSync = now.toLocaleTimeString('en-US', { 
+                    hour: 'numeric', 
+                    minute: '2-digit', 
+                    timeZoneName: 'short' 
+                });
+                
+                this.updateCrewDisplay();
+                this.showNotification(`${randomAgent.name} status updated`);
+            }
+
+            setupDragAndDrop() {
+                const taskItems = document.querySelectorAll('.task-item');
+                const crewRows = document.querySelectorAll('#crewTableBody tr');
+
+                taskItems.forEach(taskItem => {
+                    taskItem.addEventListener('dragstart', (e) => {
+                        e.dataTransfer.setData('text/plain', taskItem.dataset.task);
+                        taskItem.classList.add('dragging');
+                    });
+
+                    taskItem.addEventListener('dragend', (e) => {
+                        taskItem.classList.remove('dragging');
+                    });
+                });
+
+                crewRows.forEach(row => {
+                    row.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        row.classList.add('drag-over');
+                    });
+
+                    row.addEventListener('dragleave', (e) => {
+                        row.classList.remove('drag-over');
+                    });
+
+                    row.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        row.classList.remove('drag-over');
+                        
+                        const taskType = e.dataTransfer.getData('text/plain');
+                        const agentName = row.querySelector('.agent-name').textContent;
+                        
+                        this.assignTask(agentName, taskType);
+                    });
+                });
+            }
+
+            assignTask(agentName, taskType) {
+                const agent = this.crew.find(member => member.name === agentName);
+                if (agent) {
+                    if (!agent.tasks.includes(taskType)) {
+                        agent.tasks.push(taskType);
+                        this.updateCrewDisplay();
+                        this.showNotification(`Task "${taskType}" assigned to ${agentName}`);
+                    } else {
+                        this.showNotification(`Task "${taskType}" already assigned to ${agentName}`);
+                    }
+                }
+            }
+
+            startStatusUpdates() {
+                // Simulate periodic status updates
+                setInterval(() => {
+                    this.crew.forEach(member => {
+                        if (Math.random() > 0.7) { // 30% chance of status change
+                            member.ponoScore = Math.min(100, member.ponoScore + Math.floor(Math.random() * 3) - 1);
+                        }
+                    });
+                    this.updateCrewDisplay();
+                }, 60000); // Update every minute
+            }
+
+            showNotification(message) {
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.textContent = message;
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
+
+            // Public methods
+            syncAllAgents() {
+                this.crew.forEach(member => {
+                    if (member.status === 'Active') {
+                        member.lastSync = new Date().toLocaleTimeString('en-US', { 
+                            hour: 'numeric', 
+                            minute: '2-digit', 
+                            timeZoneName: 'short' 
+                        });
+                    }
+                });
+                this.updateCrewDisplay();
+                this.showNotification('All agents synced');
+            }
+
+            callSupportMeeting() {
+                this.showNotification('Support meeting called! Bridge crew responses incoming...');
+                // Simulate meeting responses
+                setTimeout(() => {
+                    this.showNotification('GROK: Pono score 94%, suggest tweak for clientY');
+                }, 1000);
+                setTimeout(() => {
+                    this.showNotification('CURSOR: Code snippet ready for quantum lei fix');
+                }, 2000);
+                setTimeout(() => {
+                    this.showNotification('GEMINI: Analysis complete - AGAPE protocol recommended');
+                }, 3000);
+            }
+
+            exportCrewStatus() {
+                const exportData = {
+                    timestamp: new Date().toISOString(),
+                    crew: this.crew,
+                    metrics: {
+                        activeAgents: this.crew.filter(member => member.status === 'Active').length,
+                        avgPonoScore: this.crew.reduce((sum, member) => sum + member.ponoScore, 0) / this.crew.length,
+                        totalTasks: this.crew.reduce((sum, member) => sum + member.tasks.length, 0)
+                    }
+                };
+
+                const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `bridge-crew-status-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                this.showNotification('Crew status exported');
+            }
+        }
+
+        // Initialize the tracker
+        const bridgeTracker = new BridgeCrewTracker();
+
+        // Global functions
+        function syncAllAgents() {
+            bridgeTracker.syncAllAgents();
+        }
+
+        function callSupportMeeting() {
+            bridgeTracker.callSupportMeeting();
+        }
+
+        function exportCrewStatus() {
+            bridgeTracker.exportCrewStatus();
+        }
+
+        function viewAgentTasks(agentId) {
+            const agent = bridgeTracker.crew.find(member => member.id === agentId);
+            if (agent) {
+                alert(`${agent.name} Tasks:\n${agent.tasks.join('\n')}`);
+            }
+        }
+    </script>
+</body>
+</html>

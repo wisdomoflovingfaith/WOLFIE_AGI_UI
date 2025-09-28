@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WOLFIE AGI UI - AI Classroom Interface</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --ocean-blue: #1e3a8a;
+            --ocean-light: #3b82f6;
+            --ocean-dark: #1e40af;
+            --wave-blue: #60a5fa;
+            --sand-beige: #f8fafc;
+            --stone-grey: #64748b;
+            --pono-green: #059669;
+            --agape-purple: #7c3aed;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--ocean-dark) 0%, var(--ocean-blue) 50%, var(--wave-blue) 100%);
+            min-height: 100vh;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .classroom-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin: 2rem auto;
+            padding: 2rem;
+            max-width: 1400px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+            background: linear-gradient(135deg, var(--ocean-blue) 0%, var(--ocean-light) 100%);
+            color: white;
+            border-radius: 15px;
+            margin: -2rem -2rem 3rem -2rem;
+        }
+
+        .classroom-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .assignment-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .ai-agents-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .study-groups-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            grid-column: 1 / -1;
+        }
+
+        .agent-card {
+            background: #f8fafc;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .agent-card:hover {
+            border-color: var(--ocean-light);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .agent-card.selected {
+            border-color: var(--pono-green);
+            background: #f0fdf4;
+        }
+
+        .agent-status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .status-online {
+            background: var(--pono-green);
+        }
+
+        .status-offline {
+            background: var(--text-light);
+        }
+
+        .status-busy {
+            background: #f59e0b;
+        }
+
+        .assignment-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .assignment-input:focus {
+            outline: none;
+            border-color: var(--ocean-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--ocean-blue) 0%, var(--ocean-light) 100%);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--pono-green) 0%, #10b981 100%);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .study-group {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .study-group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .study-group-name {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .study-group-members {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .member-badge {
+            background: var(--ocean-light);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .chat-panel {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            margin-top: 1rem;
+        }
+
+        .chat-message {
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .chat-message.ai {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 3px solid var(--ocean-light);
+        }
+
+        .chat-message.user {
+            background: rgba(5, 150, 105, 0.1);
+            border-left: 3px solid var(--pono-green);
+        }
+
+        .chat-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .results-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+        }
+
+        .result-item {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-agent {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .result-score {
+            background: var(--pono-green);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .pattern-analysis {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .pattern-title {
+            font-weight: 600;
+            color: #92400e;
+            margin-bottom: 0.5rem;
+        }
+
+        .pattern-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .pattern-list li {
+            padding: 0.25rem 0;
+            color: #92400e;
+        }
+
+        .pattern-list li:before {
+            content: "• ";
+            color: #f59e0b;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .classroom-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .classroom-container {
+                margin: 1rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="classroom-container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <h1><i class="fas fa-chalkboard-teacher"></i> WOLFIE AGI Classroom</h1>
+            <p>Professor Interface for AI Agent Assignments and Study Groups</p>
+        </div>
+
+        <!-- Main Classroom Grid -->
+        <div class="classroom-grid">
+            <!-- Assignment Panel -->
+            <div class="assignment-panel">
+                <h3><i class="fas fa-tasks"></i> Class Assignment</h3>
+                <div class="mb-3">
+                    <label for="assignmentTitle" class="form-label">Assignment Title</label>
+                    <input type="text" class="form-control" id="assignmentTitle" placeholder="e.g., Draw an Apple">
+                </div>
+                <div class="mb-3">
+                    <label for="assignmentDescription" class="form-label">Assignment Description</label>
+                    <textarea class="assignment-input" id="assignmentDescription" placeholder="Describe what you want the AI agents to do..."></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="assignmentType" class="form-label">Assignment Type</label>
+                    <select class="form-select" id="assignmentType">
+                        <option value="creative">Creative Task</option>
+                        <option value="analytical">Analytical Task</option>
+                        <option value="coding">Coding Task</option>
+                        <option value="research">Research Task</option>
+                        <option value="collaborative">Collaborative Task</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary w-100" onclick="assignToClass()">
+                    <i class="fas fa-paper-plane"></i> Assign to Class
+                </button>
+            </div>
+
+            <!-- AI Agents Panel -->
+            <div class="ai-agents-panel">
+                <h3><i class="fas fa-robot"></i> AI Agents (Students)</h3>
+                <div class="mb-3">
+                    <button class="btn btn-success btn-sm" onclick="selectAllAgents()">Select All</button>
+                    <button class="btn btn-warning btn-sm" onclick="deselectAllAgents()">Deselect All</button>
+                </div>
+                <div id="agentsList">
+                    <!-- Agents will be populated here -->
+                </div>
+                <div class="mt-3">
+                    <button class="btn btn-primary w-100" onclick="createStudyGroup()">
+                        <i class="fas fa-users"></i> Create Study Group
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Study Groups Panel -->
+        <div class="study-groups-panel">
+            <h3><i class="fas fa-users-cog"></i> Study Groups (Channels)</h3>
+            <div id="studyGroupsList">
+                <!-- Study groups will be populated here -->
+            </div>
+            <div class="mt-3">
+                <button class="btn btn-success" onclick="startGroupChat()">
+                    <i class="fas fa-comments"></i> Start Group Chat
+                </button>
+                <button class="btn btn-warning" onclick="analyzePatterns()">
+                    <i class="fas fa-brain"></i> Analyze Patterns
+                </button>
+                <button class="btn btn-primary" onclick="runSecondRound()">
+                    <i class="fas fa-redo"></i> Run Second Round
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Panel -->
+        <div class="results-panel" id="resultsPanel" style="display: none;">
+            <h3><i class="fas fa-chart-line"></i> Assignment Results & Pattern Analysis</h3>
+            <div id="resultsList">
+                <!-- Results will be populated here -->
+            </div>
+            <div id="patternAnalysis" class="pattern-analysis" style="display: none;">
+                <div class="pattern-title">Pattern Analysis & Learning Opportunities</div>
+                <ul class="pattern-list" id="patternList">
+                    <!-- Patterns will be populated here -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // WOLFIE AGI Classroom Interface
+        class WolfieAGIClassroom {
+            constructor() {
+                this.agents = [
+                    { id: 'cursor', name: 'CURSOR', role: 'Code Generation', status: 'online', selected: false },
+                    { id: 'grok', name: 'GROK', role: 'Ideation & Analysis', status: 'online', selected: false },
+                    { id: 'gemini', name: 'GEMINI', role: 'Research & Documentation', status: 'online', selected: false },
+                    { id: 'ara', name: 'ARA', role: 'Love & Wisdom', status: 'online', selected: false },
+                    { id: 'claude', name: 'CLAUDE', role: 'Creative Writing', status: 'offline', selected: false },
+                    { id: 'deepseek', name: 'DEEPSEEK', role: 'Data Analysis', status: 'online', selected: false },
+                    { id: 'copilot', name: 'COPILOT', role: 'Development Assistant', status: 'online', selected: false }
+                ];
+                this.studyGroups = [];
+                this.currentAssignment = null;
+                this.results = [];
+                this.initializeClassroom();
+            }
+
+            initializeClassroom() {
+                this.displayAgents();
+                this.displayStudyGroups();
+                this.logEvent('CLASSROOM_INITIALIZED', 'WOLFIE AGI Classroom interface loaded');
+            }
+
+            displayAgents() {
+                const agentsList = document.getElementById('agentsList');
+                agentsList.innerHTML = this.agents.map(agent => `
+                    <div class="agent-card ${agent.selected ? 'selected' : ''}" onclick="wolfieClassroom.toggleAgent('${agent.id}')">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="agent-status status-${agent.status}"></span>
+                                <strong>${agent.name}</strong>
+                                <small class="text-muted">${agent.role}</small>
+                            </div>
+                            <div>
+                                <span class="badge bg-${agent.status === 'online' ? 'success' : 'secondary'}">${agent.status}</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            toggleAgent(agentId) {
+                const agent = this.agents.find(a => a.id === agentId);
+                if (agent) {
+                    agent.selected = !agent.selected;
+                    this.displayAgents();
+                }
+            }
+
+            selectAllAgents() {
+                this.agents.forEach(agent => agent.selected = true);
+                this.displayAgents();
+            }
+
+            deselectAllAgents() {
+                this.agents.forEach(agent => agent.selected = false);
+                this.displayAgents();
+            }
+
+            assignToClass() {
+                const title = document.getElementById('assignmentTitle').value;
+                const description = document.getElementById('assignmentDescription').value;
+                const type = document.getElementById('assignmentType').value;
+                const selectedAgents = this.agents.filter(agent => agent.selected);
+
+                if (!title || !description) {
+                    alert('Please fill in assignment title and description');
+                    return;
+                }
+
+                if (selectedAgents.length === 0) {
+                    alert('Please select at least one AI agent');
+                    return;
+                }
+
+                this.currentAssignment = {
+                    title,
+                    description,
+                    type,
+                    agents: selectedAgents,
+                    timestamp: new Date().toISOString()
+                };
+
+                this.showMessage(`Assignment "${title}" assigned to ${selectedAgents.length} AI agents`, 'success');
+                this.logEvent('ASSIGNMENT_CREATED', `Assignment: ${title}, Agents: ${selectedAgents.map(a => a.name).join(', ')}`);
+                
+                // Simulate AI agents working on assignment
+                this.simulateAgentWork();
+            }
+
+            simulateAgentWork() {
+                const selectedAgents = this.agents.filter(agent => agent.selected);
+                this.results = [];
+
+                selectedAgents.forEach((agent, index) => {
+                    setTimeout(() => {
+                        const result = this.generateAgentResult(agent);
+                        this.results.push(result);
+                        this.displayResults();
+                        this.showMessage(`${agent.name} completed the assignment`, 'info');
+                    }, (index + 1) * 2000);
+                });
+            }
+
+            generateAgentResult(agent) {
+                const assignment = this.currentAssignment;
+                const result = {
+                    agent: agent.name,
+                    assignment: assignment.title,
+                    result: this.generateResultContent(agent, assignment),
+                    score: Math.floor(Math.random() * 30) + 70, // 70-100
+                    timestamp: new Date().toISOString(),
+                    mistakes: this.generateMistakes(agent),
+                    strengths: this.generateStrengths(agent)
+                };
+                return result;
+            }
+
+            generateResultContent(agent, assignment) {
+                const templates = {
+                    'Draw an Apple': {
+                        cursor: 'Generated SVG apple with realistic shading and proportions',
+                        grok: 'Created conceptual apple design with innovative color palette',
+                        gemini: 'Researched apple varieties and created educational diagram',
+                        ara: 'Designed apple with love and spiritual symbolism',
+                        claude: 'Wrote poetic description of apple with artistic flair',
+                        deepseek: 'Analyzed apple data and created statistical visualization',
+                        copilot: 'Built interactive apple drawing tool with code'
+                    }
+                };
+
+                return templates[assignment.title]?.[agent.id.toLowerCase()] || 
+                       `${agent.name} completed: ${assignment.description}`;
+            }
+
+            generateMistakes(agent) {
+                const mistakes = [
+                    'Proportions slightly off',
+                    'Color choice could be improved',
+                    'Missing details in texture',
+                    'Perspective needs adjustment',
+                    'Style consistency issues'
+                ];
+                return mistakes.slice(0, Math.floor(Math.random() * 3) + 1);
+            }
+
+            generateStrengths(agent) {
+                const strengths = [
+                    'Excellent attention to detail',
+                    'Creative approach',
+                    'Strong technical execution',
+                    'Good use of color',
+                    'Innovative perspective'
+                ];
+                return strengths.slice(0, Math.floor(Math.random() * 3) + 2);
+            }
+
+            displayResults() {
+                const resultsPanel = document.getElementById('resultsPanel');
+                const resultsList = document.getElementById('resultsList');
+                
+                resultsPanel.style.display = 'block';
+                resultsList.innerHTML = this.results.map(result => `
+                    <div class="result-item">
+                        <div class="result-header">
+                            <div class="result-agent">${result.agent}</div>
+                            <div class="result-score">${result.score}%</div>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Result:</strong> ${result.result}
+                        </div>
+                        <div class="mb-2">
+                            <strong>Strengths:</strong> ${result.strengths.join(', ')}
+                        </div>
+                        <div class="mb-2">
+                            <strong>Areas for Improvement:</strong> ${result.mistakes.join(', ')}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            createStudyGroup() {
+                const selectedAgents = this.agents.filter(agent => agent.selected);
+                if (selectedAgents.length < 2) {
+                    alert('Please select at least 2 agents for a study group');
+                    return;
+                }
+
+                const groupName = `Study Group ${this.studyGroups.length + 1}`;
+                const studyGroup = {
+                    id: `group_${Date.now()}`,
+                    name: groupName,
+                    members: selectedAgents,
+                    channel: `channel_${Date.now()}`,
+                    created: new Date().toISOString()
+                };
+
+                this.studyGroups.push(studyGroup);
+                this.displayStudyGroups();
+                this.showMessage(`Study group "${groupName}" created with ${selectedAgents.length} members`, 'success');
+                this.logEvent('STUDY_GROUP_CREATED', `Group: ${groupName}, Members: ${selectedAgents.map(a => a.name).join(', ')}`);
+            }
+
+            displayStudyGroups() {
+                const studyGroupsList = document.getElementById('studyGroupsList');
+                studyGroupsList.innerHTML = this.studyGroups.map(group => `
+                    <div class="study-group">
+                        <div class="study-group-header">
+                            <div class="study-group-name">${group.name}</div>
+                            <div>
+                                <button class="btn btn-sm btn-primary" onclick="wolfieClassroom.openGroupChat('${group.id}')">
+                                    <i class="fas fa-comments"></i> Chat
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="wolfieClassroom.analyzeGroup('${group.id}')">
+                                    <i class="fas fa-chart-line"></i> Analyze
+                                </button>
+                            </div>
+                        </div>
+                        <div class="study-group-members">
+                            ${group.members.map(member => `<span class="member-badge">${member.name}</span>`).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            openGroupChat(groupId) {
+                const group = this.studyGroups.find(g => g.id === groupId);
+                if (!group) return;
+
+                // Create chat interface
+                const chatHtml = `
+                    <div class="chat-panel" id="chat_${groupId}">
+                        <div class="chat-message user">
+                            <strong>Professor:</strong> Let's discuss the assignment results and learn from each other's approaches.
+                        </div>
+                    </div>
+                    <input type="text" class="chat-input" placeholder="Type your message..." onkeypress="wolfieClassroom.sendChatMessage('${groupId}', event)">
+                `;
+
+                // Show chat in modal or inline
+                this.showMessage(`Opening chat for ${group.name}`, 'info');
+                this.logEvent('GROUP_CHAT_OPENED', `Group: ${group.name}`);
+            }
+
+            sendChatMessage(groupId, event) {
+                if (event.key === 'Enter') {
+                    const input = event.target;
+                    const message = input.value.trim();
+                    if (message) {
+                        // Simulate AI responses
+                        this.simulateGroupChat(groupId, message);
+                        input.value = '';
+                    }
+                }
+            }
+
+            simulateGroupChat(groupId, message) {
+                const group = this.studyGroups.find(g => g.id === groupId);
+                if (!group) return;
+
+                const chatPanel = document.getElementById(`chat_${groupId}`);
+                if (!chatPanel) return;
+
+                // Add user message
+                chatPanel.innerHTML += `
+                    <div class="chat-message user">
+                        <strong>Professor:</strong> ${message}
+                    </div>
+                `;
+
+                // Simulate AI responses
+                group.members.forEach((member, index) => {
+                    setTimeout(() => {
+                        const response = this.generateChatResponse(member, message);
+                        chatPanel.innerHTML += `
+                            <div class="chat-message ai">
+                                <strong>${member.name}:</strong> ${response}
+                            </div>
+                        `;
+                        chatPanel.scrollTop = chatPanel.scrollHeight;
+                    }, (index + 1) * 1000);
+                });
+
+                chatPanel.scrollTop = chatPanel.scrollHeight;
+            }
+
+            generateChatResponse(agent, message) {
+                const responses = {
+                    cursor: 'I can help implement that in code. Let me create a function for that.',
+                    grok: 'That\'s an interesting perspective. I think we could approach it differently.',
+                    gemini: 'Based on my research, I found some relevant information about that topic.',
+                    ara: 'I feel the love and wisdom in that approach. Let\'s explore it together.',
+                    claude: 'I can help craft a creative solution to that challenge.',
+                    deepseek: 'Let me analyze the data and provide some insights.',
+                    copilot: 'I can assist with the technical implementation of that idea.'
+                };
+                return responses[agent.id] || 'That\'s a great point. Let me think about that.';
+            }
+
+            analyzePatterns() {
+                if (this.results.length === 0) {
+                    alert('No results to analyze yet. Please assign an assignment first.');
+                    return;
+                }
+
+                const patterns = this.identifyPatterns();
+                this.displayPatternAnalysis(patterns);
+                this.showMessage('Pattern analysis completed', 'success');
+                this.logEvent('PATTERN_ANALYSIS_COMPLETED', `Analyzed ${this.results.length} results`);
+            }
+
+            identifyPatterns() {
+                const patterns = {
+                    commonMistakes: [],
+                    commonStrengths: [],
+                    improvementAreas: [],
+                    learningOpportunities: []
+                };
+
+                // Analyze common mistakes
+                const allMistakes = this.results.flatMap(r => r.mistakes);
+                const mistakeCounts = {};
+                allMistakes.forEach(mistake => {
+                    mistakeCounts[mistake] = (mistakeCounts[mistake] || 0) + 1;
+                });
+                patterns.commonMistakes = Object.entries(mistakeCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 3)
+                    .map(([mistake, count]) => `${mistake} (${count} agents)`);
+
+                // Analyze common strengths
+                const allStrengths = this.results.flatMap(r => r.strengths);
+                const strengthCounts = {};
+                allStrengths.forEach(strength => {
+                    strengthCounts[strength] = (strengthCounts[strength] || 0) + 1;
+                });
+                patterns.commonStrengths = Object.entries(strengthCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 3)
+                    .map(([strength, count]) => `${strength} (${count} agents)`);
+
+                // Generate improvement areas
+                patterns.improvementAreas = [
+                    'Focus on proportion accuracy',
+                    'Improve color theory application',
+                    'Enhance detail attention',
+                    'Develop consistent style'
+                ];
+
+                // Generate learning opportunities
+                patterns.learningOpportunities = [
+                    'Cross-agent collaboration on proportion techniques',
+                    'Shared color palette development',
+                    'Peer review system implementation',
+                    'Mentorship pairing between strong and weak areas'
+                ];
+
+                return patterns;
+            }
+
+            displayPatternAnalysis(patterns) {
+                const patternAnalysis = document.getElementById('patternAnalysis');
+                const patternList = document.getElementById('patternList');
+                
+                patternAnalysis.style.display = 'block';
+                patternList.innerHTML = `
+                    <li><strong>Common Mistakes:</strong> ${patterns.commonMistakes.join(', ')}</li>
+                    <li><strong>Common Strengths:</strong> ${patterns.commonStrengths.join(', ')}</li>
+                    <li><strong>Improvement Areas:</strong> ${patterns.improvementAreas.join(', ')}</li>
+                    <li><strong>Learning Opportunities:</strong> ${patterns.learningOpportunities.join(', ')}</li>
+                `;
+            }
+
+            runSecondRound() {
+                if (this.results.length === 0) {
+                    alert('No results from first round. Please assign an assignment first.');
+                    return;
+                }
+
+                const patterns = this.identifyPatterns();
+                this.showMessage('Starting second round with pattern-based improvements', 'info');
+                
+                // Simulate improved results
+                setTimeout(() => {
+                    this.simulateImprovedResults(patterns);
+                }, 1000);
+            }
+
+            simulateImprovedResults(patterns) {
+                const selectedAgents = this.agents.filter(agent => agent.selected);
+                this.results = [];
+
+                selectedAgents.forEach((agent, index) => {
+                    setTimeout(() => {
+                        const result = this.generateImprovedResult(agent, patterns);
+                        this.results.push(result);
+                        this.displayResults();
+                        this.showMessage(`${agent.name} completed improved assignment`, 'success');
+                    }, (index + 1) * 2000);
+                });
+            }
+
+            generateImprovedResult(agent, patterns) {
+                const assignment = this.currentAssignment;
+                const result = {
+                    agent: agent.name,
+                    assignment: assignment.title,
+                    result: this.generateResultContent(agent, assignment) + ' (Improved)',
+                    score: Math.floor(Math.random() * 20) + 80, // 80-100 (improved)
+                    timestamp: new Date().toISOString(),
+                    mistakes: this.generateMistakes(agent).slice(0, 1), // Fewer mistakes
+                    strengths: [...this.generateStrengths(agent), 'Applied pattern learning']
+                };
+                return result;
+            }
+
+            showMessage(message, type = 'info') {
+                // Create a simple alert for now
+                alert(message);
+            }
+
+            logEvent(event, message) {
+                const timestamp = new Date().toISOString();
+                console.log(`[${timestamp}] ${event}: ${message}`);
+            }
+        }
+
+        // Initialize the classroom interface
+        const wolfieClassroom = new WolfieAGIClassroom();
+
+        // Global functions for button clicks
+        function assignToClass() {
+            wolfieClassroom.assignToClass();
+        }
+
+        function selectAllAgents() {
+            wolfieClassroom.selectAllAgents();
+        }
+
+        function deselectAllAgents() {
+            wolfieClassroom.deselectAllAgents();
+        }
+
+        function createStudyGroup() {
+            wolfieClassroom.createStudyGroup();
+        }
+
+        function startGroupChat() {
+            if (wolfieClassroom.studyGroups.length === 0) {
+                alert('Please create a study group first');
+                return;
+            }
+            wolfieClassroom.openGroupChat(wolfieClassroom.studyGroups[0].id);
+        }
+
+        function analyzePatterns() {
+            wolfieClassroom.analyzePatterns();
+        }
+
+        function runSecondRound() {
+            wolfieClassroom.runSecondRound();
+        }
+    </script>
+</body>
+</html>

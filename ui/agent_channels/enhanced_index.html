@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WOLFIE AGI UI - Enhanced Agent Channels</title>
+    
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --wolfie-green: #2d5016;
+            --wolfie-blue: #1e3a8a;
+            --wolfie-gold: #f59e0b;
+            --wolfie-purple: #7c3aed;
+            --wolfie-red: #dc2626;
+            --wolfie-gray: #6b7280;
+            --wolfie-dark: #1f2937;
+            --wolfie-light: #f9fafb;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--wolfie-dark) 0%, var(--wolfie-green) 100%);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .channel-sidebar {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-right: 2px solid var(--wolfie-green);
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .channel-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            margin: 5px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .channel-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .channel-item.active {
+            background: var(--wolfie-green);
+            border-color: var(--wolfie-gold);
+        }
+        
+        .channel-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        
+        .status-active { background: #10b981; }
+        .status-paused { background: #f59e0b; }
+        .status-completed { background: #6b7280; }
+        .status-error { background: #ef4444; }
+        
+        .main-content {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .channel-header {
+            background: rgba(0, 0, 0, 0.8);
+            border-bottom: 2px solid var(--wolfie-green);
+            padding: 20px;
+        }
+        
+        .message-area {
+            height: 400px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .message.user {
+            background: var(--wolfie-blue);
+            margin-left: 20px;
+        }
+        
+        .message.agent {
+            background: var(--wolfie-green);
+            margin-right: 20px;
+        }
+        
+        .file-queue {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px;
+        }
+        
+        .file-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .file-status {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+        }
+        
+        .status-queued { background: #f59e0b; color: black; }
+        .status-processing { background: #3b82f6; color: white; }
+        .status-completed { background: #10b981; color: white; }
+        .status-error { background: #ef4444; color: white; }
+        
+        .modal-content {
+            background: var(--wolfie-dark);
+            color: white;
+            border: 1px solid var(--wolfie-green);
+        }
+        
+        .btn-wolfie {
+            background: var(--wolfie-green);
+            border: 1px solid var(--wolfie-gold);
+            color: white;
+        }
+        
+        .btn-wolfie:hover {
+            background: var(--wolfie-gold);
+            color: var(--wolfie-dark);
+        }
+        
+        .typing-indicator {
+            display: none;
+            color: var(--wolfie-gold);
+            font-style: italic;
+        }
+        
+        .progress-bar {
+            background: var(--wolfie-green);
+        }
+        
+        .agent-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--wolfie-purple);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid h-100">
+        <div class="row h-100">
+            <!-- Channel Sidebar -->
+            <div class="col-md-3 channel-sidebar">
+                <div class="p-3">
+                    <h5 class="text-warning mb-3">
+                        <i class="fas fa-satellite-dish"></i> AI Agent Channels
+                    </h5>
+                    
+                    <!-- Channel List -->
+                    <div class="channel-list mb-3" id="channelList">
+                        <!-- Channels will be loaded dynamically -->
+                    </div>
+                    
+                    <!-- New Channel Button -->
+                    <button class="btn btn-outline-light btn-sm w-100 mb-3" onclick="showCreateChannelModal()">
+                        <i class="fas fa-plus"></i> New Channel
+                    </button>
+                    
+                    <!-- Backlog Processing -->
+                    <div class="backlog-section mb-3">
+                        <h6 class="text-info">Backlog Processing</h6>
+                        <div class="small text-muted mb-2">14 files pending review</div>
+                        <button class="btn btn-outline-info btn-sm w-100" onclick="processBacklog()">
+                            <i class="fas fa-tasks"></i> Process Backlog
+                        </button>
+                    </div>
+                    
+                    <!-- AGAPE Principles -->
+                    <div class="agape-principles">
+                        <h6 class="text-warning">AGAPE Principles</h6>
+                        <div class="small">
+                            <div class="mb-1">💚 Love - Unconditional care</div>
+                            <div class="mb-1">⏳ Patience - Enduring understanding</div>
+                            <div class="mb-1">🤝 Kindness - Gentle support</div>
+                            <div class="mb-1">🙏 Humility - Selfless service</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 main-content">
+                <div class="channel-header">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h4 id="currentChannelName">Select a Channel</h4>
+                            <p class="mb-0 text-muted" id="currentChannelDescription">Choose a channel to start AI-to-AI communication</p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <div class="btn-group">
+                                <button class="btn btn-outline-light btn-sm" onclick="refreshChannels()">
+                                    <i class="fas fa-sync"></i> Refresh
+                                </button>
+                                <button class="btn btn-outline-warning btn-sm" onclick="stopCurrentChannel()" id="stopChannelBtn" disabled>
+                                    <i class="fas fa-stop"></i> Stop
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Channel Content -->
+                <div id="channelContent" class="d-none">
+                    <!-- Messages Area -->
+                    <div class="message-area" id="messageArea">
+                        <div class="text-center text-muted">
+                            <i class="fas fa-comments fa-3x mb-3"></i>
+                            <p>Channel messages will appear here</p>
+                        </div>
+                    </div>
+                    
+                    <!-- File Queue -->
+                    <div class="file-queue">
+                        <h6 class="text-warning mb-3">
+                            <i class="fas fa-folder-open"></i> File Queue
+                        </h6>
+                        <div id="fileQueue">
+                            <div class="text-center text-muted">
+                                <i class="fas fa-folder fa-2x mb-2"></i>
+                                <p>No files in queue</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Message Input -->
+                    <div class="p-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="messageInput" placeholder="Type a message or @agent: command..." disabled>
+                            <button class="btn btn-wolfie" onclick="sendMessage()" id="sendBtn" disabled>
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="typing-indicator mt-2" id="typingIndicator">
+                            <i class="fas fa-circle-notch fa-spin"></i> Agent is typing...
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- No Channel Selected -->
+                <div id="noChannelSelected" class="text-center p-5">
+                    <i class="fas fa-satellite-dish fa-5x text-muted mb-4"></i>
+                    <h3 class="text-muted">No Channel Selected</h3>
+                    <p class="text-muted">Select a channel from the sidebar to start AI-to-AI communication</p>
+                    <button class="btn btn-wolfie" onclick="showCreateChannelModal()">
+                        <i class="fas fa-plus"></i> Create New Channel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Create Channel Modal -->
+    <div class="modal fade" id="createChannelModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New Channel</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createChannelForm">
+                        <div class="mb-3">
+                            <label for="channelName" class="form-label">Channel Name</label>
+                            <input type="text" class="form-control" id="channelName" placeholder="e.g., Cursor ↔ ARA Code Review" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="channelDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="channelDescription" rows="2" placeholder="Describe the purpose of this channel"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="selectedAgents" class="form-label">Select Agents</label>
+                            <div id="agentSelection">
+                                <!-- Agent checkboxes will be loaded here -->
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="maxIterations" class="form-label">Max Iterations</label>
+                            <input type="number" class="form-control" id="maxIterations" value="10" min="1" max="50">
+                        </div>
+                        <div class="mb-3">
+                            <label for="taskDescription" class="form-label">Initial Task</label>
+                            <textarea class="form-control" id="taskDescription" rows="3" placeholder="Describe the initial task for this channel"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-wolfie" onclick="createChannel()">Create Channel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        class AgentChannelManager {
+            constructor() {
+                this.currentChannel = null;
+                this.channels = [];
+                this.agents = [
+                    { id: 'ara', name: 'ARA', role: 'Spiritual Guide', avatar: 'A' },
+                    { id: 'cursor', name: 'Cursor', role: 'Code Master', avatar: 'C' },
+                    { id: 'grok', name: 'Grok', role: 'Pattern Finder', avatar: 'G' },
+                    { id: 'claude', name: 'Claude', role: 'Ethics Expert', avatar: 'C' },
+                    { id: 'gemini', name: 'Gemini', role: 'Research Assistant', avatar: 'G' },
+                    { id: 'deepseek', name: 'DeepSeek', role: 'Deep Analyst', avatar: 'D' },
+                    { id: 'captain_wolfie', name: 'Captain WOLFIE', role: 'Commander', avatar: 'W' }
+                ];
+                this.websocket = null;
+                this.init();
+            }
+            
+            init() {
+                this.loadChannels();
+                this.loadAgents();
+                this.setupEventListeners();
+                this.startRealTimeUpdates();
+            }
+            
+            setupEventListeners() {
+                document.getElementById('messageInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+            }
+            
+            async loadChannels() {
+                try {
+                    const response = await fetch('/core/agi_core_engine.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'getAllChannels' })
+                    });
+                    this.channels = await response.json();
+                    this.displayChannels();
+                } catch (error) {
+                    console.error('Error loading channels:', error);
+                    this.channels = [];
+                    this.displayChannels();
+                }
+            }
+            
+            async loadAgents() {
+                const agentSelection = document.getElementById('agentSelection');
+                agentSelection.innerHTML = this.agents.map(agent => `
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="${agent.id}" id="agent_${agent.id}">
+                        <label class="form-check-label" for="agent_${agent.id}">
+                            <span class="agent-avatar me-2">${agent.avatar}</span>
+                            ${agent.name} - ${agent.role}
+                        </label>
+                    </div>
+                `).join('');
+            }
+            
+            displayChannels() {
+                const channelList = document.getElementById('channelList');
+                if (this.channels.length === 0) {
+                    channelList.innerHTML = '<div class="text-center text-muted"><p>No channels available</p></div>';
+                    return;
+                }
+                
+                channelList.innerHTML = this.channels.map(channel => `
+                    <div class="channel-item" data-channel-id="${channel.id}" onclick="selectChannel('${channel.id}')">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="small fw-bold">${channel.name || 'Unnamed Channel'}</span>
+                            <span class="badge bg-${this.getStatusColor(channel.status)}">${channel.status}</span>
+                        </div>
+                        <div class="small text-muted">${channel.description || 'No description'}</div>
+                        <div class="small text-muted">Agents: ${channel.agents ? channel.agents.join(', ') : 'Unknown'}</div>
+                        <div class="small text-muted">Iterations: ${channel.iterations || 0}/${channel.max_iterations || 10}</div>
+                        <div class="channel-status status-${channel.status}"></div>
+                    </div>
+                `).join('');
+            }
+            
+            getStatusColor(status) {
+                const colors = {
+                    'active': 'success',
+                    'paused': 'warning',
+                    'completed': 'secondary',
+                    'stopped': 'danger',
+                    'error': 'danger'
+                };
+                return colors[status] || 'secondary';
+            }
+            
+            selectChannel(channelId) {
+                this.currentChannel = this.channels.find(c => c.id === channelId);
+                if (!this.currentChannel) return;
+                
+                // Update UI
+                document.getElementById('currentChannelName').textContent = this.currentChannel.name || 'Unnamed Channel';
+                document.getElementById('currentChannelDescription').textContent = this.currentChannel.description || 'No description';
+                document.getElementById('channelContent').classList.remove('d-none');
+                document.getElementById('noChannelSelected').classList.add('d-none');
+                document.getElementById('messageInput').disabled = false;
+                document.getElementById('sendBtn').disabled = false;
+                document.getElementById('stopChannelBtn').disabled = this.currentChannel.status !== 'active';
+                
+                // Update channel list
+                document.querySelectorAll('.channel-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                document.querySelector(`[data-channel-id="${channelId}"]`).classList.add('active');
+                
+                this.loadChannelMessages();
+                this.loadChannelFiles();
+            }
+            
+            async loadChannelMessages() {
+                const messageArea = document.getElementById('messageArea');
+                if (this.currentChannel && this.currentChannel.responses) {
+                    messageArea.innerHTML = this.currentChannel.responses.map(response => `
+                        <div class="message agent">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="agent-avatar">${response.agent ? response.agent.charAt(0).toUpperCase() : 'A'}</div>
+                                <div>
+                                    <strong>${response.agent || 'Agent'}</strong>
+                                    <small class="text-muted ms-2">${response.timestamp || 'Just now'}</small>
+                                </div>
+                            </div>
+                            <div>${response.response || response.message || 'No message'}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    messageArea.innerHTML = '<div class="text-center text-muted"><i class="fas fa-comments fa-3x mb-3"></i><p>No messages yet</p></div>';
+                }
+                messageArea.scrollTop = messageArea.scrollHeight;
+            }
+            
+            async loadChannelFiles() {
+                const fileQueue = document.getElementById('fileQueue');
+                if (this.currentChannel && this.currentChannel.files) {
+                    fileQueue.innerHTML = this.currentChannel.files.map(file => `
+                        <div class="file-item">
+                            <div>
+                                <i class="fas fa-file"></i> ${file.file}
+                                <small class="text-muted ms-2">from ${file.from}</small>
+                            </div>
+                            <span class="file-status status-queued">Queued</span>
+                        </div>
+                    `).join('');
+                } else {
+                    fileQueue.innerHTML = '<div class="text-center text-muted"><i class="fas fa-folder fa-2x mb-2"></i><p>No files in queue</p></div>';
+                }
+            }
+            
+            async sendMessage() {
+                const input = document.getElementById('messageInput');
+                const message = input.value.trim();
+                if (!message || !this.currentChannel) return;
+                
+                // Add user message to UI
+                this.addMessage('user', 'user', message);
+                input.value = '';
+                
+                // Show typing indicator
+                this.showTypingIndicator();
+                
+                try {
+                    const response = await fetch('/core/agi_core_engine.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'sendChannelMessage',
+                            channelId: this.currentChannel.id,
+                            message: message
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    this.hideTypingIndicator();
+                    
+                    if (result.success) {
+                        this.addMessage('agent', result.agent, result.response);
+                    } else {
+                        this.addMessage('system', 'system', 'Error: ' + result.error);
+                    }
+                } catch (error) {
+                    this.hideTypingIndicator();
+                    this.addMessage('system', 'system', 'Error sending message: ' + error.message);
+                }
+            }
+            
+            addMessage(type, sender, content) {
+                const messageArea = document.getElementById('messageArea');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${type}`;
+                
+                const avatar = this.agents.find(a => a.id === sender)?.avatar || sender.charAt(0).toUpperCase();
+                
+                messageDiv.innerHTML = `
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="agent-avatar">${avatar}</div>
+                        <div>
+                            <strong>${sender}</strong>
+                            <small class="text-muted ms-2">${new Date().toLocaleTimeString()}</small>
+                        </div>
+                    </div>
+                    <div>${content}</div>
+                `;
+                
+                messageArea.appendChild(messageDiv);
+                messageArea.scrollTop = messageArea.scrollHeight;
+            }
+            
+            showTypingIndicator() {
+                document.getElementById('typingIndicator').style.display = 'block';
+            }
+            
+            hideTypingIndicator() {
+                document.getElementById('typingIndicator').style.display = 'none';
+            }
+            
+            async createChannel() {
+                const name = document.getElementById('channelName').value;
+                const description = document.getElementById('channelDescription').value;
+                const selectedAgents = Array.from(document.querySelectorAll('#agentSelection input:checked')).map(cb => cb.value);
+                const maxIterations = parseInt(document.getElementById('maxIterations').value);
+                const task = document.getElementById('taskDescription').value;
+                
+                if (selectedAgents.length < 2) {
+                    alert('Please select at least 2 agents');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/core/agi_core_engine.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'initiateAIChannel',
+                            selectedAgents: selectedAgents,
+                            task: task,
+                            maxIterations: maxIterations,
+                            name: name,
+                            description: description
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    if (result.success) {
+                        // Close modal
+                        bootstrap.Modal.getInstance(document.getElementById('createChannelModal')).hide();
+                        
+                        // Refresh channels
+                        await this.loadChannels();
+                        
+                        // Select new channel
+                        this.selectChannel(result.channelId);
+                    } else {
+                        alert('Error creating channel: ' + result.error);
+                    }
+                } catch (error) {
+                    alert('Error creating channel: ' + error.message);
+                }
+            }
+            
+            async processBacklog() {
+                const backlogFiles = [
+                    'meeting_mode_processor.php',
+                    'agi_core_engine.php',
+                    'superpositionally_manager.php',
+                    'multi_agent_coordinator.php',
+                    'file_search_engine.php',
+                    'decision_engine.php',
+                    'memory_management.php',
+                    'no_casino_mode_processor.php',
+                    'meeting_mode_processor.php',
+                    'multi_agent_channel_manager.php',
+                    'agi_core_engine_enhanced.php',
+                    'superpositionally_manager_enhanced.php',
+                    'endpoint_handler.php',
+                    'integration_test.php'
+                ];
+                
+                try {
+                    const response = await fetch('/core/agi_core_engine.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'processBacklogFiles',
+                            fileList: backlogFiles
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    if (result.success) {
+                        alert('Backlog processing started! Channel ID: ' + result.channelId);
+                        await this.loadChannels();
+                    } else {
+                        alert('Error processing backlog: ' + result.error);
+                    }
+                } catch (error) {
+                    alert('Error processing backlog: ' + error.message);
+                }
+            }
+            
+            async stopCurrentChannel() {
+                if (!this.currentChannel) return;
+                
+                try {
+                    const response = await fetch('/core/agi_core_engine.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'stopChannel',
+                            channelId: this.currentChannel.id
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    if (result.success) {
+                        await this.loadChannels();
+                        this.selectChannel(this.currentChannel.id);
+                    } else {
+                        alert('Error stopping channel: ' + result.error);
+                    }
+                } catch (error) {
+                    alert('Error stopping channel: ' + error.message);
+                }
+            }
+            
+            async refreshChannels() {
+                await this.loadChannels();
+                if (this.currentChannel) {
+                    this.selectChannel(this.currentChannel.id);
+                }
+            }
+            
+            startRealTimeUpdates() {
+                setInterval(() => {
+                    if (this.currentChannel) {
+                        this.loadChannelMessages();
+                        this.loadChannelFiles();
+                    }
+                }, 5000); // Update every 5 seconds
+            }
+        }
+        
+        // Global functions for HTML onclick handlers
+        let channelManager;
+        
+        function selectChannel(channelId) {
+            channelManager.selectChannel(channelId);
+        }
+        
+        function showCreateChannelModal() {
+            const modal = new bootstrap.Modal(document.getElementById('createChannelModal'));
+            modal.show();
+        }
+        
+        function createChannel() {
+            channelManager.createChannel();
+        }
+        
+        function processBacklog() {
+            channelManager.processBacklog();
+        }
+        
+        function stopCurrentChannel() {
+            channelManager.stopCurrentChannel();
+        }
+        
+        function refreshChannels() {
+            channelManager.refreshChannels();
+        }
+        
+        function sendMessage() {
+            channelManager.sendMessage();
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            channelManager = new AgentChannelManager();
+        });
+    </script>
+</body>
+</html>

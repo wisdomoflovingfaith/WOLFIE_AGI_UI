@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WOLFIE AGI UI - Modern Channels (React-style)</title>
+    <style>
+        :root {
+            --wolfie-green: #00ff88;
+            --wolfie-blue: #0088ff;
+            --wolfie-purple: #8800ff;
+            --wolfie-orange: #ff8800;
+            --wolfie-red: #ff0088;
+            --bg-dark: #1a1a1a;
+            --bg-light: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --border-color: #444444;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-light) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 15px;
+            border: 2px solid var(--wolfie-green);
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, var(--wolfie-green), var(--wolfie-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--wolfie-green);
+        }
+        
+        .status-dot.error {
+            background: var(--wolfie-red);
+        }
+        
+        .status-dot.warning {
+            background: var(--wolfie-orange);
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            height: 70vh;
+        }
+        
+        .sidebar {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            padding: 20px;
+            background: rgba(0, 255, 136, 0.1);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        .chat-input {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(0, 255, 136, 0.1);
+            border-left: 4px solid var(--wolfie-green);
+        }
+        
+        .message.user {
+            background: rgba(0, 136, 255, 0.1);
+            border-left-color: var(--wolfie-blue);
+        }
+        
+        .message-header {
+            font-weight: bold;
+            color: var(--wolfie-green);
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+        
+        .message-content {
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .input-group input {
+            flex: 1;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 16px;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--wolfie-green);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+        
+        .btn {
+            padding: 15px 25px;
+            background: linear-gradient(45deg, var(--wolfie-green), var(--wolfie-blue));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, var(--wolfie-orange), var(--wolfie-purple));
+        }
+        
+        .channel-list {
+            margin-bottom: 20px;
+        }
+        
+        .channel-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        
+        .channel-item:hover {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: var(--wolfie-green);
+        }
+        
+        .channel-item.active {
+            background: rgba(0, 255, 136, 0.2);
+            border-color: var(--wolfie-green);
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 255, 136, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--wolfie-green);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            background: rgba(255, 0, 136, 0.1);
+            border: 1px solid var(--wolfie-red);
+            color: var(--wolfie-red);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .success-message {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--wolfie-green);
+            color: var(--wolfie-green);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            
+            .sidebar {
+                order: 2;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛸 WOLFIE AGI UI - Modern Channels</h1>
+            <p>React-style with fetch API, async/await, and modern JavaScript</p>
+        </div>
+        
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-dot" id="connection-dot"></div>
+                <span>Connection: <span id="connection-status">Connecting...</span></span>
+            </div>
+            <div class="status-item">
+                <span>Channel: <span id="current-channel">None</span></span>
+            </div>
+            <div class="status-item">
+                <span>Polling: <span id="polling-status">Stopped</span></span>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="channel-list">
+                    <h3>Channels</h3>
+                    <div id="channel-list">
+                        <div class="channel-item" onclick="createChannel()">
+                            + Create New Channel
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3>Actions</h3>
+                    <button class="btn" onclick="createChannel()">Create Channel</button>
+                    <button class="btn btn-secondary" onclick="sendTestMessage()">Send Test</button>
+                    <button class="btn btn-secondary" onclick="clearMessages()">Clear</button>
+                </div>
+                
+                <div>
+                    <h3>System Info</h3>
+                    <p><strong>User:</strong> <span id="current-user">captain_wolfie</span></p>
+                    <p><strong>API:</strong> <span id="api-status">Modern fetch()</span></p>
+                    <p><strong>Tech:</strong> ES6+, async/await</p>
+                </div>
+            </div>
+            
+            <div class="chat-container">
+                <div class="chat-header">
+                    <h3>Modern Channel Messages</h3>
+                    <p>Real-time communication using fetch API and modern JavaScript</p>
+                </div>
+                
+                <div class="chat-messages" id="currentchat">
+                    <div class="message">
+                        <div class="message-header">System</div>
+                        <div class="message-content">Welcome to WOLFIE AGI UI Modern Channels! Using fetch API, async/await, and modern JavaScript patterns.</div>
+                    </div>
+                </div>
+                
+                <div class="chat-input">
+                    <div class="input-group">
+                        <input type="text" id="message-input" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+                        <button class="btn" onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="modern_channel_system.js"></script>
+    <script>
+        // Modern JavaScript with async/await
+        class ModernChannelUI {
+            constructor() {
+                this.channelSystem = new ModernChannelSystem();
+                this.setupEventListeners();
+                this.init();
+            }
+            
+            async init() {
+                console.log('🛸 Modern Channel UI Initializing...');
+                
+                // Setup event listeners
+                this.channelSystem.on('connected', () => {
+                    this.updateStatus('connected');
+                    this.showMessage('Connected to WOLFIE AGI UI!', 'success');
+                });
+                
+                this.channelSystem.on('error', (error) => {
+                    this.updateStatus('error');
+                    this.showMessage(`Connection error: ${error.message}`, 'error');
+                });
+                
+                this.channelSystem.on('channelCreated', (data) => {
+                    this.showMessage(`Channel created: ${data.channel_id}`, 'success');
+                    this.updateChannelInfo(data.channel_id);
+                });
+                
+                this.channelSystem.on('messageSent', (data) => {
+                    this.addMessageToUI('captain_wolfie', data.message, 'user');
+                });
+                
+                this.channelSystem.on('newMessages', (messages) => {
+                    messages.forEach(msg => {
+                        this.addMessageToUI(`Agent ${msg.jsrn}`, msg.message, 'agent');
+                    });
+                });
+                
+                this.channelSystem.on('statusUpdate', (status) => {
+                    this.updatePollingStatus(status.polling);
+                });
+            }
+            
+            setupEventListeners() {
+                // Auto-update status every 5 seconds
+                setInterval(() => {
+                    this.updateSystemInfo();
+                }, 5000);
+            }
+            
+            updateStatus(status) {
+                const statusElement = document.getElementById('connection-status');
+                const dotElement = document.getElementById('connection-dot');
+                
+                if (statusElement) {
+                    statusElement.textContent = status;
+                }
+                
+                if (dotElement) {
+                    dotElement.className = `status-dot ${status}`;
+                }
+            }
+            
+            updateChannelInfo(channelId) {
+                const channelElement = document.getElementById('current-channel');
+                if (channelElement) {
+                    channelElement.textContent = channelId || 'None';
+                }
+            }
+            
+            updatePollingStatus(polling) {
+                const pollingElement = document.getElementById('polling-status');
+                if (pollingElement) {
+                    pollingElement.textContent = polling ? 'Active' : 'Stopped';
+                }
+            }
+            
+            async updateSystemInfo() {
+                try {
+                    const status = await this.channelSystem.getSystemStatus();
+                    this.updateStatus(status.connection);
+                    this.updateChannelInfo(status.channel);
+                    this.updatePollingStatus(status.polling);
+                } catch (error) {
+                    console.error('Status update failed:', error);
+                }
+            }
+            
+            showMessage(message, type = 'info') {
+                const container = document.querySelector('.main-content');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `${type}-message`;
+                messageDiv.textContent = message;
+                
+                container.insertBefore(messageDiv, container.firstChild);
+                
+                // Auto-remove after 5 seconds
+                setTimeout(() => {
+                    if (messageDiv.parentNode) {
+                        messageDiv.parentNode.removeChild(messageDiv);
+                    }
+                }, 5000);
+            }
+            
+            addMessageToUI(user, message, type) {
+                const chatElement = document.getElementById('currentchat');
+                if (!chatElement) return;
+                
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${type}`;
+                messageDiv.innerHTML = `
+                    <div class="message-header">${user} - ${new Date().toLocaleTimeString()}</div>
+                    <div class="message-content">${this.escapeHtml(message)}</div>
+                `;
+                
+                chatElement.appendChild(messageDiv);
+                chatElement.scrollTop = chatElement.scrollHeight;
+            }
+            
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+        
+        // Global functions for HTML onclick
+        let channelUI;
+        
+        async function createChannel() {
+            const channelName = prompt('Enter channel name:', 'WOLFIE Channel ' + Date.now());
+            if (!channelName) return;
+            
+            try {
+                await channelUI.channelSystem.createChannel(channelName);
+            } catch (error) {
+                channelUI.showMessage(`Channel creation failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function sendMessage() {
+            const input = document.getElementById('message-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            try {
+                await channelUI.channelSystem.sendMessage(message);
+                input.value = '';
+            } catch (error) {
+                channelUI.showMessage(`Message send failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function sendTestMessage() {
+            const testMessage = `Test message from Captain WOLFIE at ${new Date().toLocaleTimeString()} using modern fetch API!`;
+            try {
+                await channelUI.channelSystem.sendMessage(testMessage);
+            } catch (error) {
+                channelUI.showMessage(`Test message failed: ${error.message}`, 'error');
+            }
+        }
+        
+        function clearMessages() {
+            const chatElement = document.getElementById('currentchat');
+            if (chatElement) {
+                chatElement.innerHTML = '<div class="message"><div class="message-header">System</div><div class="message-content">Messages cleared</div></div>';
+            }
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            channelUI = new ModernChannelUI();
+            console.log('🛸 Modern Channel UI Ready!');
+        });
+    </script>
+</body>
+</html>

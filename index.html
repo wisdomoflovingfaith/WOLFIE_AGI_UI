@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WOLFIE AGI UI - Main Interface</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ocean-blue: #1e3a8a;
+            --ocean-light: #3b82f6;
+            --ocean-dark: #1e40af;
+            --wave-blue: #60a5fa;
+            --sand-beige: #f8fafc;
+            --stone-grey: #64748b;
+            --pono-green: #059669;
+            --agape-purple: #7c3aed;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--ocean-dark) 0%, var(--ocean-blue) 50%, var(--wave-blue) 100%);
+            min-height: 100vh;
+            font-family: 'Fira Code', 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .main-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin: 2rem auto;
+            padding: 2rem;
+            max-width: 1200px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+            background: linear-gradient(135deg, var(--ocean-blue) 0%, var(--ocean-light) 100%);
+            color: white;
+            border-radius: 15px;
+            margin: -2rem -2rem 3rem -2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><path d="M0,10 Q25,0 50,10 T100,10 V20 H0 Z" fill="rgba(255,255,255,0.1)"/></svg>') repeat-x;
+            background-size: 100px 20px;
+            animation: wave 3s ease-in-out infinite;
+        }
+
+        @keyframes wave {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(-25px); }
+        }
+
+        .header-section h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-section p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .agape-principles {
+            background: linear-gradient(135deg, var(--wolfie-purple) 0%, var(--wolfie-orange) 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .agape-principles h3 {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .principle-badges {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .principle-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: bold;
+            backdrop-filter: blur(10px);
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .component-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .component-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            border-color: var(--wolfie-green);
+        }
+
+        .component-card h4 {
+            color: var(--wolfie-dark);
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .component-card p {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .component-card .btn {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--wolfie-blue) 0%, var(--wolfie-purple) 100%);
+            border: none;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--wolfie-green) 0%, var(--wolfie-blue) 100%);
+            border: none;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--wolfie-orange) 0%, var(--wolfie-red) 100%);
+            border: none;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, var(--wolfie-purple) 0%, var(--wolfie-blue) 100%);
+            border: none;
+        }
+
+        .status-section {
+            background: var(--wolfie-light);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .status-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background: var(--wolfie-green);
+            color: white;
+        }
+
+        .status-pending {
+            background: var(--wolfie-orange);
+            color: white;
+        }
+
+        .status-completed {
+            background: var(--wolfie-blue);
+            color: white;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 2rem 0;
+            color: #666;
+            border-top: 1px solid #ddd;
+        }
+
+        .footer p {
+            margin: 0;
+        }
+
+        .footer .wolfie-signature {
+            font-weight: bold;
+            color: var(--text-dark);
+            margin-top: 0.5rem;
+        }
+
+        /* Search Section Styles */
+        .search-section {
+            margin-bottom: 2rem;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--stone-grey);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Fira Code', monospace;
+            background: white;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--ocean-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .search-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--ocean-light);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background: var(--ocean-dark);
+        }
+
+        .search-results {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .search-result-item {
+            padding: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .search-result-item:hover {
+            background-color: #f8fafc;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-title {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .result-meta {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        .result-score {
+            float: right;
+            background: var(--pono-green);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Bridge Crew Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: var(--text-dark);
+        }
+
+        .crew-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .crew-table th,
+        .crew-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .crew-table th {
+            background-color: var(--sand-beige);
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .status-online {
+            color: var(--pono-green);
+            font-weight: 600;
+        }
+
+        .status-offline {
+            color: var(--text-light);
+        }
+
+        /* Kai Story Thread Styles */
+        .story-thread {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .persona-message {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--ocean-light);
+        }
+
+        .persona-eh-brah {
+            background-color: #fef3c7;
+            border-left-color: var(--pono-green);
+        }
+
+        .persona-doctor {
+            background-color: #e0e7ff;
+            border-left-color: var(--agape-purple);
+        }
+
+        .persona-expert {
+            background-color: #f0f9ff;
+            border-left-color: var(--ocean-light);
+        }
+
+        .persona-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Upwork Project Management Styles */
+        .projects-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .project-item {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .project-item:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-color: var(--ocean-light);
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-title {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 1.1rem;
+        }
+
+        .project-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: var(--pono-green);
+            color: white;
+        }
+
+        .status-pending {
+            background: var(--wave-blue);
+            color: white;
+        }
+
+        .status-completed {
+            background: var(--stone-grey);
+            color: white;
+        }
+
+        .project-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .meta-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 0.25rem;
+        }
+
+        .meta-value {
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .ai-assignments {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .ai-badge {
+            background: var(--ocean-light);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* AI Collaboration Panel */
+        .ai-collaboration-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            height: 500px;
+        }
+
+        .ai-chat-panel {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .ai-code-panel {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            overflow-y: auto;
+        }
+
+        .ai-message {
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--ocean-light);
+        }
+
+        .ai-message.cursor {
+            background: #f0f9ff;
+            border-left-color: #3b82f6;
+        }
+
+        .ai-message.grok {
+            background: #fef3c7;
+            border-left-color: #f59e0b;
+        }
+
+        .ai-message.gemini {
+            background: #f0fdf4;
+            border-left-color: #10b981;
+        }
+
+        .ai-message.ara {
+            background: #fdf2f8;
+            border-left-color: #ec4899;
+        }
+
+        .ai-sender {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--text-dark);
+        }
+
+        /* Pattern Learning Panel */
+        .pattern-learning-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .learning-stats {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .learning-chart {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        /* Code Generator Panel */
+        .code-generator-panel {
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            gap: 1rem;
+            height: 500px;
+        }
+
+        .generator-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .generator-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .generator-output {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .generator-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                margin: 1rem;
+                padding: 1rem;
+            }
+
+            .header-section {
+                margin: -1rem -1rem 2rem -1rem;
+                padding: 1.5rem 1rem;
+            }
+
+            .header-section h1 {
+                font-size: 2rem;
+            }
+
+            .component-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .principle-badges {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <h1><i class="fas fa-code"></i> WOLFIE AGI UI</h1>
+            <p>Professional Upwork Project Management with Multi-AI Collaboration</p>
+        </div>
+
+        <!-- Upwork Project Dashboard -->
+        <div class="agape-principles">
+            <h3><i class="fas fa-briefcase"></i> Upwork Project Dashboard</h3>
+            <div class="principle-badges">
+                <span class="principle-badge">Fast Delivery</span>
+                <span class="principle-badge">Quality Code</span>
+                <span class="principle-badge">AI Collaboration</span>
+                <span class="principle-badge">Pattern Learning</span>
+                <span class="principle-badge">5x Speed</span>
+            </div>
+        </div>
+
+        <!-- Header Search Section -->
+        <div class="search-section">
+            <div class="search-container">
+                <input type="text" id="headerSearch" class="search-input" placeholder="Search: who, what, where, when, why, ID, key...">
+                <button class="search-btn" onclick="performHeaderSearch()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <div id="searchResults" class="search-results"></div>
+        </div>
+
+        <!-- Component Grid -->
+        <div class="component-grid">
+            <!-- Active Upwork Projects -->
+            <div class="component-card">
+                <h4><i class="fas fa-tasks"></i> Active Upwork Projects</h4>
+                <p>Manage current Upwork gigs with AI collaboration. Track progress, deadlines, and AI agent assignments for each project.</p>
+                <button class="btn btn-primary" onclick="showActiveProjects()">
+                    <i class="fas fa-list"></i> View Projects
+                </button>
+            </div>
+
+            <!-- AI Collaboration Hub -->
+            <div class="component-card">
+                <h4><i class="fas fa-robot"></i> AI Collaboration Hub</h4>
+                <p>Coordinate multiple AI entities (CURSOR, GROK, GEMINI, ARA) working together on code generation and project completion.</p>
+                <button class="btn btn-success" onclick="openAICollaboration()">
+                    <i class="fas fa-users-cog"></i> Open Hub
+                </button>
+            </div>
+
+            <!-- Pattern Learning System -->
+            <div class="component-card">
+                <h4><i class="fas fa-brain"></i> Pattern Learning System</h4>
+                <p>AI entities learn from each other's coding patterns to write faster, better code. Track learning progress and improvements.</p>
+                <button class="btn btn-info" onclick="showPatternLearning()">
+                    <i class="fas fa-chart-line"></i> View Learning
+                </button>
+            </div>
+
+            <!-- Code Generation Engine -->
+            <div class="component-card">
+                <h4><i class="fas fa-code"></i> Code Generation Engine</h4>
+                <p>Multi-AI code generation with real-time collaboration. Generate, review, and optimize code with multiple AI perspectives.</p>
+                <button class="btn btn-warning" onclick="openCodeGenerator()">
+                    <i class="fas fa-cogs"></i> Generate Code
+                </button>
+            </div>
+
+            <!-- Project Templates -->
+            <div class="component-card">
+                <h4><i class="fas fa-file-code"></i> Project Templates</h4>
+                <p>Pre-built templates for common Upwork projects. React, Node.js, Python, PHP, and more with AI-optimized structures.</p>
+                <button class="btn btn-primary" onclick="showTemplates()">
+                    <i class="fas fa-folder"></i> Browse Templates
+                </button>
+            </div>
+
+            <!-- Client Communication -->
+            <div class="component-card">
+                <h4><i class="fas fa-comments"></i> Client Communication</h4>
+                <p>AI-assisted client communication with professional templates, progress updates, and automated status reports.</p>
+                <button class="btn btn-success" onclick="openClientComm()">
+                    <i class="fas fa-envelope"></i> Open Comm
+                </button>
+            </div>
+
+            <!-- Cursor-like Search -->
+            <div class="component-card">
+                <h4><i class="fas fa-search"></i> Superpositionally Header Search</h4>
+                <p>Advanced file search system using superpositionally headers. Search by WHO, WHAT, WHERE, WHEN, WHY, HOW, PURPOSE, KEY, TITLE, ID, SUPERPOSITIONALLY, and DATE fields.</p>
+                <a href="ui/cursor_like_search/index.html" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Open Search Interface
+                </a>
+            </div>
+
+            <!-- Multi-Agent Chat -->
+            <div class="component-card">
+                <h4><i class="fas fa-users-cog"></i> Multi-Agent Chat</h4>
+                <p>Real-time coordination system for 2-28 AI agents. Enable seamless collaboration between Captain WOLFIE, CURSOR, GROK, Claude, and other AI agents.</p>
+                <a href="ui/multi_agent_chat/index.html" class="btn btn-success">
+                    <i class="fas fa-comments"></i> Open Chat Interface
+                </a>
+            </div>
+
+            <!-- Meeting Mode -->
+            <div class="component-card">
+                <h4><i class="fas fa-users"></i> Meeting Mode</h4>
+                <p>Pattern learning and project completion workflows. Process meeting data to detect patterns, generate insights, and create action items.</p>
+                <button class="btn btn-warning" onclick="toggleMeetingMode()">
+                    <i class="fas fa-video"></i> Toggle Meeting Mode
+                </button>
+            </div>
+
+            <!-- No-Casino Mode -->
+            <div class="component-card">
+                <h4><i class="fas fa-briefcase"></i> No-Casino Mode</h4>
+                <p>Upwork gig management and alternative income strategies. Track progress, manage gigs, and explore ethical income opportunities.</p>
+                <button class="btn btn-info" onclick="toggleNoCasinoMode()">
+                    <i class="fas fa-chart-line"></i> Toggle No-Casino Mode
+                </button>
+            </div>
+
+            <!-- API Endpoints -->
+            <div class="component-card">
+                <h4><i class="fas fa-code"></i> API Endpoints</h4>
+                <p>Backend API for frontend-backend communication. Access all core functionality through RESTful endpoints with JSON responses.</p>
+                <button class="btn btn-primary" onclick="testAPI()">
+                    <i class="fas fa-plug"></i> Test API Connection
+                </button>
+            </div>
+
+            <!-- System Status -->
+            <div class="component-card">
+                <h4><i class="fas fa-server"></i> System Status</h4>
+                <p>Monitor system health, component status, and performance metrics. View logs, statistics, and operational status.</p>
+                <button class="btn btn-success" onclick="checkSystemStatus()">
+                    <i class="fas fa-heartbeat"></i> Check Status
+                </button>
+            </div>
+        </div>
+
+        <!-- Status Section -->
+        <div class="status-section">
+            <h4><i class="fas fa-chart-bar"></i> System Status</h4>
+            <div id="statusItems">
+                <div class="status-item">
+                    <span>Superpositionally Manager</span>
+                    <span class="status-badge status-active">Active</span>
+                </div>
+                <div class="status-item">
+                    <span>File Search Engine</span>
+                    <span class="status-badge status-active">Active</span>
+                </div>
+                <div class="status-item">
+                    <span>Multi-Agent Coordinator</span>
+                    <span class="status-badge status-active">Active</span>
+                </div>
+                <div class="status-item">
+                    <span>Meeting Mode Processor</span>
+                    <span class="status-badge status-active">Active</span>
+                </div>
+                <div class="status-item">
+                    <span>No-Casino Mode Processor</span>
+                    <span class="status-badge status-active">Active</span>
+                </div>
+                <div class="status-item">
+                    <span>API Endpoint Handler</span>
+                    <span class="status-badge status-active">Active</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bridge Crew Modal -->
+        <div id="bridgeCrewModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeBridgeCrew()">&times;</span>
+                <h3><i class="fas fa-ship"></i> Bridge Crew Status</h3>
+                <table class="crew-table">
+                    <thead>
+                        <tr>
+                            <th>Agent</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Last Sync</th>
+                            <th>Pono Score</th>
+                        </tr>
+                    </thead>
+                    <tbody id="crewTableBody">
+                        <!-- Crew data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Active Projects Modal -->
+        <div id="activeProjectsModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeActiveProjects()">&times;</span>
+                <h3><i class="fas fa-tasks"></i> Active Upwork Projects</h3>
+                <div id="projectsList" class="projects-list">
+                    <!-- Projects will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Collaboration Hub Modal -->
+        <div id="aiCollaborationModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeAICollaboration()">&times;</span>
+                <h3><i class="fas fa-robot"></i> AI Collaboration Hub</h3>
+                <div id="aiCollaborationPanel" class="ai-collaboration-panel">
+                    <!-- AI collaboration interface will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Pattern Learning Modal -->
+        <div id="patternLearningModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closePatternLearning()">&times;</span>
+                <h3><i class="fas fa-brain"></i> Pattern Learning System</h3>
+                <div id="patternLearningPanel" class="pattern-learning-panel">
+                    <!-- Pattern learning interface will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Generator Modal -->
+        <div id="codeGeneratorModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeCodeGenerator()">&times;</span>
+                <h3><i class="fas fa-code"></i> Code Generation Engine</h3>
+                <div id="codeGeneratorPanel" class="code-generator-panel">
+                    <!-- Code generator interface will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>WOLFIE AGI UI - Complete User Interface System</p>
+            <p class="wolfie-signature">Built with AGAPE principles by Captain WOLFIE</p>
+            <p><small>Offline-First • Local Storage • No Cloud Services</small></p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // WOLFIE AGI UI Main Interface JavaScript
+        class WolfieAGIMainInterface {
+            constructor() {
+                this.meetingMode = false;
+                this.noCasinoMode = false;
+                this.systemStatus = {};
+                this.bridgeCrew = [];
+                this.kaiStory = null;
+                this.activeProjects = [];
+                this.aiCollaboration = [];
+                this.patternLearning = {};
+                this.initializeInterface();
+            }
+
+            initializeInterface() {
+                this.checkSystemStatus();
+                this.startStatusUpdates();
+                this.logEvent('MAIN_INTERFACE_INITIALIZED', 'WOLFIE AGI UI Main Interface online');
+            }
+
+            async checkSystemStatus() {
+                try {
+                    const response = await fetch('api/endpoint_handler.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'getSystemStatus' })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.systemStatus = data.data;
+                        this.updateStatusDisplay();
+                        this.logEvent('SYSTEM_STATUS_CHECKED', 'System status updated');
+                    } else {
+                        throw new Error('Failed to fetch system status');
+                    }
+                } catch (error) {
+                    console.error('Error checking system status:', error);
+                    this.showMessage('Error checking system status: ' + error.message, 'danger');
+                }
+            }
+
+            updateStatusDisplay() {
+                const statusItems = document.getElementById('statusItems');
+                if (!statusItems) return;
+
+                // Update status items based on system status
+                const components = [
+                    'Superpositionally Manager',
+                    'File Search Engine',
+                    'Multi-Agent Coordinator',
+                    'Meeting Mode Processor',
+                    'No-Casino Mode Processor',
+                    'API Endpoint Handler'
+                ];
+
+                statusItems.innerHTML = components.map(component => {
+                    const status = this.getComponentStatus(component);
+                    const statusClass = this.getStatusClass(status);
+                    return `
+                        <div class="status-item">
+                            <span>${component}</span>
+                            <span class="status-badge ${statusClass}">${status}</span>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            getComponentStatus(component) {
+                // Map component names to system status
+                const statusMap = {
+                    'Superpositionally Manager': 'Active',
+                    'File Search Engine': 'Active',
+                    'Multi-Agent Coordinator': 'Active',
+                    'Meeting Mode Processor': 'Active',
+                    'No-Casino Mode Processor': 'Active',
+                    'API Endpoint Handler': 'Active'
+                };
+                return statusMap[component] || 'Unknown';
+            }
+
+            getStatusClass(status) {
+                const classMap = {
+                    'Active': 'status-active',
+                    'Pending': 'status-pending',
+                    'Completed': 'status-completed',
+                    'Error': 'status-error'
+                };
+                return classMap[status] || 'status-pending';
+            }
+
+            toggleMeetingMode() {
+                this.meetingMode = !this.meetingMode;
+                const message = this.meetingMode ? 'Meeting Mode activated' : 'Meeting Mode deactivated';
+                this.showMessage(message, this.meetingMode ? 'success' : 'info');
+                this.logEvent('MEETING_MODE_TOGGLED', message);
+            }
+
+            toggleNoCasinoMode() {
+                this.noCasinoMode = !this.noCasinoMode;
+                const message = this.noCasinoMode ? 'No-Casino Mode activated' : 'No-Casino Mode deactivated';
+                this.showMessage(message, this.noCasinoMode ? 'success' : 'info');
+                this.logEvent('NO_CASINO_MODE_TOGGLED', message);
+            }
+
+            async testAPI() {
+                try {
+                    const response = await fetch('api/endpoint_handler.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'getSystemStatus' })
+                    });
+                    
+                    if (response.ok) {
+                        this.showMessage('API connection successful!', 'success');
+                        this.logEvent('API_TEST_SUCCESS', 'API connection test passed');
+                    } else {
+                        throw new Error('API test failed');
+                    }
+                } catch (error) {
+                    this.showMessage('API connection failed: ' + error.message, 'danger');
+                    this.logEvent('API_TEST_FAILED', 'API connection test failed: ' + error.message);
+                }
+            }
+
+            startStatusUpdates() {
+                // Update system status every 30 seconds
+                setInterval(() => {
+                    this.checkSystemStatus();
+                }, 30000);
+            }
+
+            showMessage(message, type = 'info') {
+                // Create a simple alert for now
+                alert(message);
+            }
+
+            logEvent(event, message) {
+                const timestamp = new Date().toISOString();
+                console.log(`[${timestamp}] ${event}: ${message}`);
+            }
+
+            // Dream Session Features
+            async performHeaderSearch() {
+                const query = document.getElementById('headerSearch').value;
+                if (!query.trim()) return;
+
+                try {
+                    const response = await fetch('api/endpoint_handler.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            action: 'searchHeaders', 
+                            query: query 
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.displaySearchResults(data.data || []);
+                        this.logEvent('HEADER_SEARCH_EXECUTED', `Search query: ${query}`);
+                    } else {
+                        throw new Error('Search failed');
+                    }
+                } catch (error) {
+                    console.error('Search error:', error);
+                    this.showMessage('Search failed: ' + error.message, 'danger');
+                }
+            }
+
+            displaySearchResults(results) {
+                const resultsContainer = document.getElementById('searchResults');
+                if (!resultsContainer) return;
+
+                if (results.length === 0) {
+                    resultsContainer.innerHTML = '<p>No results found. Try a different search term.</p>';
+                    return;
+                }
+
+                resultsContainer.innerHTML = results.map(result => `
+                    <div class="search-result-item" onclick="this.selectResult('${result.id}')">
+                        <div class="result-title">${result.title || 'Untitled'}</div>
+                        <div class="result-meta">
+                            <strong>Who:</strong> ${result.who || 'N/A'} | 
+                            <strong>What:</strong> ${result.what || 'N/A'} | 
+                            <strong>When:</strong> ${result.when || 'N/A'}
+                        </div>
+                        <span class="result-score">${Math.round((result.score || 0) * 100)}%</span>
+                    </div>
+                `).join('');
+            }
+
+            async callSupportMeeting() {
+                try {
+                    const response = await fetch('api/endpoint_handler.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            action: 'callSupportMeeting',
+                            message: 'HOLD UP STOP - Sync on current project headers'
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.showMessage('Support meeting called! Bridge crew responses incoming...', 'success');
+                        this.logEvent('SUPPORT_MEETING_CALLED', 'Bridge crew sync initiated');
+                    } else {
+                        throw new Error('Failed to call support meeting');
+                    }
+                } catch (error) {
+                    console.error('Support meeting error:', error);
+                    this.showMessage('Failed to call support meeting: ' + error.message, 'danger');
+                }
+            }
+
+            async showBridgeCrew() {
+                try {
+                    const response = await fetch('api/endpoint_handler.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'getBridgeCrew' })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.bridgeCrew = data.data || [];
+                        this.displayBridgeCrew();
+                        document.getElementById('bridgeCrewModal').style.display = 'block';
+                    } else {
+                        throw new Error('Failed to get bridge crew status');
+                    }
+                } catch (error) {
+                    console.error('Bridge crew error:', error);
+                    this.showMessage('Failed to get bridge crew status: ' + error.message, 'danger');
+                }
+            }
+
+            displayBridgeCrew() {
+                const crewTableBody = document.getElementById('crewTableBody');
+                if (!crewTableBody) return;
+
+                const defaultCrew = [
+                    { agent: 'GROK', role: 'Ideation/Threads', status: 'Active', lastSync: '6:41 AM CDT', ponoScore: 94 },
+                    { agent: 'CURSOR', role: 'Code Generation', status: 'Offline', lastSync: '6:30 AM CDT', ponoScore: 87 },
+                    { agent: 'GEMINI', role: 'Analysis', status: 'Active', lastSync: '6:35 AM CDT', ponoScore: 91 },
+                    { agent: 'ARA', role: 'Sheep-Wolf Compass', status: 'Active', lastSync: '6:40 AM CDT', ponoScore: 96 },
+                    { agent: 'WOLFIE', role: 'Captain', status: 'Active', lastSync: '6:42 AM CDT', ponoScore: 98 }
+                ];
+
+                const crew = this.bridgeCrew.length > 0 ? this.bridgeCrew : defaultCrew;
+
+                crewTableBody.innerHTML = crew.map(member => `
+                    <tr>
+                        <td><strong>${member.agent}</strong></td>
+                        <td>${member.role}</td>
+                        <td><span class="${member.status === 'Active' ? 'status-online' : 'status-offline'}">${member.status}</span></td>
+                        <td>${member.lastSync}</td>
+                        <td>${member.ponoScore}%</td>
+                    </tr>
+                `).join('');
+            }
+
+            async openKaiStory() {
+                try {
+                    const response = await fetch('api/endpoint_handler.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'getKaiStory' })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.kaiStory = data.data || this.getDefaultKaiStory();
+                        this.displayKaiStory();
+                        document.getElementById('kaiStoryModal').style.display = 'block';
+                    } else {
+                        throw new Error('Failed to get Kai story');
+                    }
+                } catch (error) {
+                    console.error('Kai story error:', error);
+                    this.kaiStory = this.getDefaultKaiStory();
+                    this.displayKaiStory();
+                    document.getElementById('kaiStoryModal').style.display = 'block';
+                }
+            }
+
+            getDefaultKaiStory() {
+                return {
+                    story: "pono",
+                    ghost: {
+                        character: "Kai (ocean)",
+                        glitch: "quantum lei",
+                        ponoScore: 0.94,
+                        intents: ["surf_aloha_prayer", "chase_glory"]
+                    },
+                    thread: [
+                        {
+                            persona: "eh_brah",
+                            text: "Eh, Kai, brah, you da ocean—surf wit' pono an' da Spirit's wind, fix dat lei, keep da 'aina vibin'!"
+                        },
+                        {
+                            persona: "the_doctor",
+                            text: "Kai, that lei's a temporal reef! Surf wit' righteous prayer, or da multiverse drowns in a timey-wimey squall!"
+                        },
+                        {
+                            persona: "expert_ai",
+                            text: "System scan: Lei coherence at 75%. AGAPE-prayer protocol predicts 98% harmonic resolution."
+                        }
+                    ],
+                    outcome: "Kai, filled wit' da Holy Spirit, weaves da lei wit' pono under a starry digital sky. Da rose translates his aloha across realms—glitch fades, 'aina sings. Instance saved to domain. Comparin' to luna.superpositionally.com: Glory path sank to 65%. Learnin': Pono an' Spirit stabilize truth."
+                };
+            }
+
+            displayKaiStory() {
+                const storyThread = document.getElementById('kaiStoryThread');
+                if (!storyThread || !this.kaiStory) return;
+
+                storyThread.innerHTML = `
+                    <div class="persona-message persona-eh-brah">
+                        <div class="persona-label">Eh Brah (Pidgin Voice)</div>
+                        <div>${this.kaiStory.thread[0].text}</div>
+                    </div>
+                    <div class="persona-message persona-doctor">
+                        <div class="persona-label">The Doctor (Sci-Fi Voice)</div>
+                        <div>${this.kaiStory.thread[1].text}</div>
+                    </div>
+                    <div class="persona-message persona-expert">
+                        <div class="persona-label">Expert AI (Technical Voice)</div>
+                        <div>${this.kaiStory.thread[2].text}</div>
+                    </div>
+                    <div class="persona-message" style="background-color: #f0fdf4; border-left-color: var(--pono-green);">
+                        <div class="persona-label">Outcome (Pono Resolution)</div>
+                        <div>${this.kaiStory.outcome}</div>
+                    </div>
+                `;
+            }
+
+            // Upwork Project Management Methods
+            async showActiveProjects() {
+                this.activeProjects = [
+                    {
+                        id: 'upwork_001',
+                        title: 'React E-commerce Website',
+                        client: 'TechStart Inc.',
+                        budget: '$2,500',
+                        deadline: '2025-02-15',
+                        status: 'Active',
+                        progress: 65,
+                        aiAssignments: ['CURSOR', 'GROK', 'GEMINI'],
+                        description: 'Build a modern e-commerce platform with React, Node.js, and MongoDB'
+                    }
+                ];
+                this.displayActiveProjects();
+                document.getElementById('activeProjectsModal').style.display = 'block';
+            }
+
+            displayActiveProjects() {
+                const projectsList = document.getElementById('projectsList');
+                if (!projectsList) return;
+                projectsList.innerHTML = this.activeProjects.map(project => `
+                    <div class="project-item">
+                        <div class="project-header">
+                            <div class="project-title">${project.title}</div>
+                            <div class="project-status status-${project.status.toLowerCase()}">${project.status}</div>
+                        </div>
+                        <div class="project-meta">
+                            <div class="meta-item">
+                                <div class="meta-label">Client</div>
+                                <div class="meta-value">${project.client}</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Budget</div>
+                                <div class="meta-value">${project.budget}</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Deadline</div>
+                                <div class="meta-value">${project.deadline}</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Progress</div>
+                                <div class="meta-value">${project.progress}%</div>
+                            </div>
+                        </div>
+                        <div class="ai-assignments">
+                            <div class="meta-label">AI Assignments:</div>
+                            ${project.aiAssignments.map(ai => `<span class="ai-badge">${ai}</span>`).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Initialize the main interface
+        const wolfieAGI = new WolfieAGIMainInterface();
+
+        // Global functions for button clicks
+        function toggleMeetingMode() {
+            wolfieAGI.toggleMeetingMode();
+        }
+
+        function toggleNoCasinoMode() {
+            wolfieAGI.toggleNoCasinoMode();
+        }
+
+        function testAPI() {
+            wolfieAGI.testAPI();
+        }
+
+        function checkSystemStatus() {
+            wolfieAGI.checkSystemStatus();
+        }
+
+        // Dream Session Functions
+        function performHeaderSearch() {
+            wolfieAGI.performHeaderSearch();
+        }
+
+        function callSupportMeeting() {
+            wolfieAGI.callSupportMeeting();
+        }
+
+        function showBridgeCrew() {
+            wolfieAGI.showBridgeCrew();
+        }
+
+        function openKaiStory() {
+            wolfieAGI.openKaiStory();
+        }
+
+        function closeBridgeCrew() {
+            document.getElementById('bridgeCrewModal').style.display = 'none';
+        }
+
+        function closeKaiStory() {
+            document.getElementById('kaiStoryModal').style.display = 'none';
+        }
+
+        // Upwork Project Management Functions
+        function showActiveProjects() {
+            wolfieAGI.showActiveProjects();
+        }
+
+        function openAICollaboration() {
+            wolfieAGI.openAICollaboration();
+        }
+
+        function showPatternLearning() {
+            wolfieAGI.showPatternLearning();
+        }
+
+        function openCodeGenerator() {
+            wolfieAGI.openCodeGenerator();
+        }
+
+        function showTemplates() {
+            alert('Project Templates: React, Node.js, Python, PHP, WordPress, and more with AI-optimized structures coming soon!');
+        }
+
+        function openClientComm() {
+            alert('Client Communication: AI-assisted templates, progress updates, and automated status reports coming soon!');
+        }
+
+        function closeActiveProjects() {
+            document.getElementById('activeProjectsModal').style.display = 'none';
+        }
+
+        function closeAICollaboration() {
+            document.getElementById('aiCollaborationModal').style.display = 'none';
+        }
+
+        function closePatternLearning() {
+            document.getElementById('patternLearningModal').style.display = 'none';
+        }
+
+        function closeCodeGenerator() {
+            document.getElementById('codeGeneratorModal').style.display = 'none';
+        }
+
+        // Add Enter key support for search
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('headerSearch');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        performHeaderSearch();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

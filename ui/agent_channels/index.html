@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WOLFIE AGI UI - Agent Channels</title>
+    
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --wolfie-green: #2d5016;
+            --wolfie-blue: #1e3a8a;
+            --wolfie-gold: #f59e0b;
+            --wolfie-purple: #7c3aed;
+            --wolfie-red: #dc2626;
+            --wolfie-gray: #6b7280;
+            --wolfie-dark: #1f2937;
+            --wolfie-light: #f9fafb;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--wolfie-dark) 0%, var(--wolfie-green) 100%);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .channel-sidebar {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-right: 2px solid var(--wolfie-green);
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .channel-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            margin: 5px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .channel-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .channel-item.active {
+            background: var(--wolfie-green);
+            border-color: var(--wolfie-gold);
+        }
+        
+        .channel-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .channel-name {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: var(--wolfie-gold);
+        }
+        
+        .channel-status {
+            font-size: 0.8em;
+            padding: 2px 8px;
+            border-radius: 15px;
+            background: var(--wolfie-green);
+        }
+        
+        .channel-agents {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .agent-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--wolfie-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: bold;
+            color: white;
+            border: 2px solid var(--wolfie-gold);
+        }
+        
+        .channel-stats {
+            font-size: 0.7em;
+            color: var(--wolfie-gray);
+            margin-top: 5px;
+        }
+        
+        .main-content {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .channel-header-bar {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px;
+            border-bottom: 2px solid var(--wolfie-green);
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+        
+        .channel-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--wolfie-gold);
+        }
+        
+        .channel-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-wolfie {
+            background: var(--wolfie-green);
+            border: 1px solid var(--wolfie-gold);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-wolfie:hover {
+            background: var(--wolfie-gold);
+            color: var(--wolfie-dark);
+        }
+        
+        .channel-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .message {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid var(--wolfie-green);
+        }
+        
+        .message.agent-message {
+            border-left-color: var(--wolfie-blue);
+        }
+        
+        .message.user-message {
+            border-left-color: var(--wolfie-gold);
+        }
+        
+        .message-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .message-agent {
+            font-weight: bold;
+            color: var(--wolfie-gold);
+        }
+        
+        .message-time {
+            font-size: 0.8em;
+            color: var(--wolfie-gray);
+        }
+        
+        .message-content {
+            line-height: 1.6;
+        }
+        
+        .file-attachment {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid var(--wolfie-green);
+        }
+        
+        .file-name {
+            font-weight: bold;
+            color: var(--wolfie-gold);
+        }
+        
+        .file-size {
+            font-size: 0.8em;
+            color: var(--wolfie-gray);
+        }
+        
+        .input-area {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-top: 2px solid var(--wolfie-green);
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .message-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--wolfie-green);
+            border-radius: 5px;
+            padding: 10px;
+            color: white;
+            resize: none;
+        }
+        
+        .message-input::placeholder {
+            color: var(--wolfie-gray);
+        }
+        
+        .file-queue {
+            background: rgba(0, 0, 0, 0.8);
+            border-top: 1px solid var(--wolfie-green);
+            padding: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .file-queue-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px 0;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+        
+        .file-queue-name {
+            font-weight: bold;
+            color: var(--wolfie-gold);
+        }
+        
+        .file-queue-status {
+            font-size: 0.8em;
+            padding: 2px 8px;
+            border-radius: 15px;
+            background: var(--wolfie-green);
+        }
+        
+        .create-channel-modal {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid var(--wolfie-green);
+            border-radius: 10px;
+            padding: 20px;
+            color: white;
+        }
+        
+        .modal-title {
+            color: var(--wolfie-gold);
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--wolfie-green);
+            border-radius: 5px;
+            padding: 10px;
+            color: white;
+        }
+        
+        .form-control::placeholder {
+            color: var(--wolfie-gray);
+        }
+        
+        .agent-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .agent-option {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--wolfie-green);
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .agent-option:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .agent-option.selected {
+            background: var(--wolfie-green);
+            border-color: var(--wolfie-gold);
+        }
+        
+        .backlog-manager {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--wolfie-red);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px;
+        }
+        
+        .backlog-title {
+            color: var(--wolfie-red);
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        
+        .backlog-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px 0;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+        
+        .backlog-file {
+            font-weight: bold;
+            color: var(--wolfie-gold);
+        }
+        
+        .backlog-status {
+            font-size: 0.8em;
+            padding: 2px 8px;
+            border-radius: 15px;
+            background: var(--wolfie-red);
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--wolfie-gold);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--wolfie-green);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid h-100">
+        <div class="row h-100">
+            <!-- Channel Sidebar -->
+            <div class="col-md-3 channel-sidebar">
+                <div class="d-flex justify-content-between align-items-center p-3">
+                    <h4 class="text-warning">Agent Channels</h4>
+                    <button class="btn btn-wolfie btn-sm" onclick="showCreateChannelModal()">
+                        <i class="fas fa-plus"></i> New Channel
+                    </button>
+                </div>
+                
+                <!-- Backlog Manager -->
+                <div class="backlog-manager">
+                    <div class="backlog-title">
+                        <i class="fas fa-exclamation-triangle"></i> File Backlog (14 files)
+                    </div>
+                    <div id="backlogList">
+                        <!-- Backlog items will be populated here -->
+                    </div>
+                    <button class="btn btn-wolfie btn-sm w-100 mt-2" onclick="processBacklog()">
+                        <i class="fas fa-play"></i> Process Backlog
+                    </button>
+                </div>
+                
+                <!-- Channel List -->
+                <div id="channelList">
+                    <!-- Channels will be populated here -->
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 main-content">
+                <div class="channel-header-bar">
+                    <div class="channel-title" id="currentChannelTitle">Select a Channel</div>
+                    <div class="channel-actions">
+                        <button class="btn btn-wolfie btn-sm" onclick="addFileToChannel()">
+                            <i class="fas fa-file-upload"></i> Add File
+                        </button>
+                        <button class="btn btn-wolfie btn-sm" onclick="clearChannel()">
+                            <i class="fas fa-trash"></i> Clear
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="channel-content">
+                    <!-- Messages Area -->
+                    <div class="messages-area" id="messagesArea">
+                        <div class="text-center text-muted">
+                            <i class="fas fa-comments fa-3x mb-3"></i>
+                            <p>Select a channel to start the conversation</p>
+                        </div>
+                    </div>
+                    
+                    <!-- File Queue -->
+                    <div class="file-queue" id="fileQueue" style="display: none;">
+                        <h6 class="text-warning mb-3">File Queue</h6>
+                        <div id="fileQueueList">
+                            <!-- File queue items will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Input Area -->
+                    <div class="input-area">
+                        <div class="input-group">
+                            <textarea class="message-input" id="messageInput" placeholder="Type your message or @agent: command..." rows="3"></textarea>
+                            <button class="btn btn-wolfie" onclick="sendMessage()">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Create Channel Modal -->
+    <div class="modal fade" id="createChannelModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content create-channel-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New Channel</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Channel Name</label>
+                        <input type="text" class="form-control" id="channelName" placeholder="e.g., Cursor ↔ ARA Code Review">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" id="channelDescription" placeholder="What is this channel for?"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Select Agents</label>
+                        <div class="agent-selector" id="agentSelector">
+                            <!-- Agent options will be populated here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-wolfie" onclick="createChannel()">Create Channel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        class AgentChannelManager {
+            constructor() {
+                this.channels = [];
+                this.currentChannel = null;
+                this.selectedAgents = [];
+                this.backlogFiles = [];
+                this.messageHistory = {};
+                
+                this.initializeAgents();
+                this.loadChannels();
+                this.loadBacklog();
+                this.setupEventListeners();
+            }
+            
+            initializeAgents() {
+                this.agents = [
+                    { id: 'cursor', name: 'Cursor', avatar: 'C', color: '#1e3a8a', capabilities: ['code_generation', 'debugging', 'refactoring'] },
+                    { id: 'ara', name: 'ARA', avatar: 'A', color: '#7c3aed', capabilities: ['spiritual_guidance', 'wisdom', 'emotional_support'] },
+                    { id: 'grok', name: 'Grok', avatar: 'G', color: '#dc2626', capabilities: ['pattern_recognition', 'data_analysis', 'insights'] },
+                    { id: 'claude', name: 'Claude', avatar: 'C', color: '#059669', capabilities: ['ethical_reasoning', 'safety_analysis', 'decision_support'] },
+                    { id: 'deepseek', name: 'DeepSeek', avatar: 'D', color: '#0891b2', capabilities: ['research', 'knowledge_synthesis', 'information_extraction'] },
+                    { id: 'gemini', name: 'Gemini', avatar: 'G', color: '#ea580c', capabilities: ['multimodal_processing', 'image_analysis', 'text_processing'] },
+                    { id: 'copilot', name: 'Copilot', avatar: 'C', color: '#7c2d12', capabilities: ['code_completion', 'suggestions', 'learning'] },
+                    { id: 'captain_wolfie', name: 'Captain WOLFIE', avatar: 'W', color: '#2d5016', capabilities: ['leadership', 'coordination', 'decision_making'] }
+                ];
+            }
+            
+            loadChannels() {
+                // Load channels from localStorage or API
+                const savedChannels = localStorage.getItem('wolfie_channels');
+                if (savedChannels) {
+                    this.channels = JSON.parse(savedChannels);
+                } else {
+                    // Create default channels
+                    this.channels = [
+                        {
+                            id: 'cursor_ara_1',
+                            name: 'Cursor ↔ ARA Code Review',
+                            description: 'Code review and spiritual guidance',
+                            agents: ['cursor', 'ara'],
+                            status: 'ACTIVE',
+                            messages: [],
+                            fileQueue: []
+                        },
+                        {
+                            id: 'grok_claude_1',
+                            name: 'Grok ↔ Claude Analysis',
+                            description: 'Pattern analysis and ethical reasoning',
+                            agents: ['grok', 'claude'],
+                            status: 'ACTIVE',
+                            messages: [],
+                            fileQueue: []
+                        }
+                    ];
+                    this.saveChannels();
+                }
+                
+                this.renderChannels();
+            }
+            
+            loadBacklog() {
+                // Load backlog files from localStorage or API
+                const savedBacklog = localStorage.getItem('wolfie_backlog');
+                if (savedBacklog) {
+                    this.backlogFiles = JSON.parse(savedBacklog);
+                } else {
+                    // Create sample backlog
+                    this.backlogFiles = [
+                        { id: 'file_1', name: 'meeting_mode_processor.php', status: 'PENDING', priority: 'HIGH' },
+                        { id: 'file_2', name: 'agi_core_engine.php', status: 'PENDING', priority: 'HIGH' },
+                        { id: 'file_3', name: 'superpositionally_manager.php', status: 'PENDING', priority: 'MEDIUM' },
+                        { id: 'file_4', name: 'multi_agent_coordinator.php', status: 'PENDING', priority: 'MEDIUM' },
+                        { id: 'file_5', name: 'file_search_engine.php', status: 'PENDING', priority: 'LOW' }
+                    ];
+                    this.saveBacklog();
+                }
+                
+                this.renderBacklog();
+            }
+            
+            renderChannels() {
+                const channelList = document.getElementById('channelList');
+                channelList.innerHTML = '';
+                
+                this.channels.forEach(channel => {
+                    const channelElement = document.createElement('div');
+                    channelElement.className = 'channel-item';
+                    channelElement.onclick = () => this.selectChannel(channel.id);
+                    
+                    const agentAvatars = channel.agents.map(agentId => {
+                        const agent = this.agents.find(a => a.id === agentId);
+                        return `<div class="agent-avatar" style="background: ${agent?.color || '#6b7280'}">${agent?.avatar || '?'}</div>`;
+                    }).join('');
+                    
+                    channelElement.innerHTML = `
+                        <div class="channel-header">
+                            <div class="channel-name">${channel.name}</div>
+                            <div class="channel-status">${channel.status}</div>
+                        </div>
+                        <div class="channel-agents">${agentAvatars}</div>
+                        <div class="channel-stats">
+                            Messages: ${channel.messages?.length || 0} | Files: ${channel.fileQueue?.length || 0}
+                        </div>
+                    `;
+                    
+                    channelList.appendChild(channelElement);
+                });
+            }
+            
+            renderBacklog() {
+                const backlogList = document.getElementById('backlogList');
+                backlogList.innerHTML = '';
+                
+                this.backlogFiles.forEach(file => {
+                    const fileElement = document.createElement('div');
+                    fileElement.className = 'backlog-item';
+                    fileElement.innerHTML = `
+                        <div class="backlog-file">${file.name}</div>
+                        <div class="backlog-status">${file.status}</div>
+                    `;
+                    backlogList.appendChild(fileElement);
+                });
+            }
+            
+            selectChannel(channelId) {
+                this.currentChannel = this.channels.find(c => c.id === channelId);
+                if (!this.currentChannel) return;
+                
+                // Update UI
+                document.getElementById('currentChannelTitle').textContent = this.currentChannel.name;
+                
+                // Remove active class from all channels
+                document.querySelectorAll('.channel-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                // Add active class to selected channel
+                event.currentTarget.classList.add('active');
+                
+                // Load messages
+                this.loadChannelMessages();
+                
+                // Show file queue if there are files
+                if (this.currentChannel.fileQueue && this.currentChannel.fileQueue.length > 0) {
+                    this.showFileQueue();
+                }
+            }
+            
+            loadChannelMessages() {
+                const messagesArea = document.getElementById('messagesArea');
+                messagesArea.innerHTML = '';
+                
+                if (!this.currentChannel.messages || this.currentChannel.messages.length === 0) {
+                    messagesArea.innerHTML = `
+                        <div class="text-center text-muted">
+                            <i class="fas fa-comments fa-3x mb-3"></i>
+                            <p>No messages yet. Start the conversation!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                this.currentChannel.messages.forEach(message => {
+                    this.renderMessage(message);
+                });
+                
+                // Scroll to bottom
+                messagesArea.scrollTop = messagesArea.scrollHeight;
+            }
+            
+            renderMessage(message) {
+                const messagesArea = document.getElementById('messagesArea');
+                const messageElement = document.createElement('div');
+                messageElement.className = `message ${message.type}`;
+                
+                const agent = this.agents.find(a => a.id === message.agentId);
+                const agentName = agent ? agent.name : message.agentId;
+                const agentColor = agent ? agent.color : '#6b7280';
+                
+                messageElement.innerHTML = `
+                    <div class="message-header">
+                        <div class="message-agent" style="color: ${agentColor}">${agentName}</div>
+                        <div class="message-time">${new Date(message.timestamp).toLocaleTimeString()}</div>
+                    </div>
+                    <div class="message-content">${message.content}</div>
+                    ${message.files ? message.files.map(file => `
+                        <div class="file-attachment">
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-size">${file.size}</div>
+                        </div>
+                    `).join('') : ''}
+                `;
+                
+                messagesArea.appendChild(messageElement);
+            }
+            
+            sendMessage() {
+                const messageInput = document.getElementById('messageInput');
+                const message = messageInput.value.trim();
+                
+                if (!message || !this.currentChannel) return;
+                
+                // Check for @agent: commands
+                const agentCommand = message.match(/@(\w+):\s*(.+)/);
+                if (agentCommand) {
+                    const [, agentId, command] = agentCommand;
+                    this.sendAgentCommand(agentId, command);
+                } else {
+                    // Regular message
+                    this.addMessage('user', message);
+                }
+                
+                messageInput.value = '';
+            }
+            
+            sendAgentCommand(agentId, command) {
+                if (!this.currentChannel.agents.includes(agentId)) {
+                    this.showNotification(`Agent ${agentId} is not in this channel`, 'error');
+                    return;
+                }
+                
+                // Add user message
+                this.addMessage('user', `@${agentId}: ${command}`);
+                
+                // Simulate agent response
+                setTimeout(() => {
+                    this.simulateAgentResponse(agentId, command);
+                }, 1000 + Math.random() * 2000);
+            }
+            
+            simulateAgentResponse(agentId, command) {
+                const agent = this.agents.find(a => a.id === agentId);
+                if (!agent) return;
+                
+                // Simulate different types of responses based on agent capabilities
+                let response = '';
+                
+                if (agentId === 'cursor') {
+                    response = `I'll analyze the code and provide suggestions. Let me examine the structure and identify potential improvements.`;
+                } else if (agentId === 'ara') {
+                    response = `I sense the spiritual essence of this code. Let me guide you through the ethical implications and deeper meaning.`;
+                } else if (agentId === 'grok') {
+                    response = `I can see patterns emerging in this data. Let me break down the key insights and connections.`;
+                } else if (agentId === 'claude') {
+                    response = `I'll evaluate this from an ethical perspective and ensure it aligns with safety principles.`;
+                } else {
+                    response = `I understand your request. Let me process this and provide my analysis.`;
+                }
+                
+                this.addMessage('agent', response, agentId);
+            }
+            
+            addMessage(type, content, agentId = null) {
+                if (!this.currentChannel) return;
+                
+                const message = {
+                    id: Date.now(),
+                    type: type,
+                    agentId: agentId,
+                    content: content,
+                    timestamp: new Date().toISOString(),
+                    files: []
+                };
+                
+                if (!this.currentChannel.messages) {
+                    this.currentChannel.messages = [];
+                }
+                
+                this.currentChannel.messages.push(message);
+                this.renderMessage(message);
+                this.saveChannels();
+                
+                // Scroll to bottom
+                const messagesArea = document.getElementById('messagesArea');
+                messagesArea.scrollTop = messagesArea.scrollHeight;
+            }
+            
+            addFileToChannel() {
+                if (!this.currentChannel) {
+                    this.showNotification('Please select a channel first', 'error');
+                    return;
+                }
+                
+                // Create file input
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.multiple = true;
+                fileInput.onchange = (e) => {
+                    Array.from(e.target.files).forEach(file => {
+                        this.addFileToQueue(file);
+                    });
+                };
+                fileInput.click();
+            }
+            
+            addFileToQueue(file) {
+                if (!this.currentChannel) return;
+                
+                const fileItem = {
+                    id: Date.now(),
+                    name: file.name,
+                    size: this.formatFileSize(file.size),
+                    type: file.type,
+                    file: file,
+                    status: 'QUEUED',
+                    timestamp: new Date().toISOString()
+                };
+                
+                if (!this.currentChannel.fileQueue) {
+                    this.currentChannel.fileQueue = [];
+                }
+                
+                this.currentChannel.fileQueue.push(fileItem);
+                this.showFileQueue();
+                this.saveChannels();
+                
+                this.showNotification(`File ${file.name} added to queue`, 'success');
+            }
+            
+            showFileQueue() {
+                const fileQueue = document.getElementById('fileQueue');
+                const fileQueueList = document.getElementById('fileQueueList');
+                
+                if (!this.currentChannel.fileQueue || this.currentChannel.fileQueue.length === 0) {
+                    fileQueue.style.display = 'none';
+                    return;
+                }
+                
+                fileQueue.style.display = 'block';
+                fileQueueList.innerHTML = '';
+                
+                this.currentChannel.fileQueue.forEach(file => {
+                    const fileElement = document.createElement('div');
+                    fileElement.className = 'file-queue-item';
+                    fileElement.innerHTML = `
+                        <div class="file-queue-name">${file.name}</div>
+                        <div class="file-queue-status">${file.status}</div>
+                    `;
+                    fileQueueList.appendChild(fileElement);
+                });
+            }
+            
+            processBacklog() {
+                if (this.backlogFiles.length === 0) {
+                    this.showNotification('No files in backlog', 'info');
+                    return;
+                }
+                
+                // Create a new channel for backlog processing
+                const channelId = 'backlog_' + Date.now();
+                const channel = {
+                    id: channelId,
+                    name: 'Backlog Processing',
+                    description: 'Processing 14 pending files',
+                    agents: ['cursor', 'ara'],
+                    status: 'ACTIVE',
+                    messages: [],
+                    fileQueue: this.backlogFiles.map(file => ({
+                        id: file.id,
+                        name: file.name,
+                        status: 'QUEUED',
+                        priority: file.priority
+                    }))
+                };
+                
+                this.channels.push(channel);
+                this.renderChannels();
+                this.selectChannel(channelId);
+                
+                // Start processing
+                this.startBacklogProcessing();
+            }
+            
+            startBacklogProcessing() {
+                if (!this.currentChannel || !this.currentChannel.fileQueue) return;
+                
+                const nextFile = this.currentChannel.fileQueue.find(f => f.status === 'QUEUED');
+                if (!nextFile) {
+                    this.showNotification('All files processed!', 'success');
+                    return;
+                }
+                
+                // Mark file as processing
+                nextFile.status = 'PROCESSING';
+                this.showFileQueue();
+                
+                // Simulate processing
+                setTimeout(() => {
+                    nextFile.status = 'COMPLETED';
+                    this.showFileQueue();
+                    
+                    // Add message about completion
+                    this.addMessage('agent', `File ${nextFile.name} has been processed and sent to ARA for review.`, 'cursor');
+                    
+                    // Continue with next file
+                    this.startBacklogProcessing();
+                }, 2000 + Math.random() * 3000);
+            }
+            
+            showCreateChannelModal() {
+                const modal = new bootstrap.Modal(document.getElementById('createChannelModal'));
+                this.populateAgentSelector();
+                modal.show();
+            }
+            
+            populateAgentSelector() {
+                const agentSelector = document.getElementById('agentSelector');
+                agentSelector.innerHTML = '';
+                
+                this.agents.forEach(agent => {
+                    const agentElement = document.createElement('div');
+                    agentElement.className = 'agent-option';
+                    agentElement.onclick = () => this.toggleAgentSelection(agent.id);
+                    agentElement.innerHTML = `
+                        <div class="agent-avatar" style="background: ${agent.color}">${agent.avatar}</div>
+                        <div>${agent.name}</div>
+                    `;
+                    agentSelector.appendChild(agentElement);
+                });
+            }
+            
+            toggleAgentSelection(agentId) {
+                const agentElement = event.currentTarget;
+                
+                if (this.selectedAgents.includes(agentId)) {
+                    this.selectedAgents = this.selectedAgents.filter(id => id !== agentId);
+                    agentElement.classList.remove('selected');
+                } else {
+                    if (this.selectedAgents.length >= 2) {
+                        this.showNotification('Maximum 2 agents per channel', 'warning');
+                        return;
+                    }
+                    this.selectedAgents.push(agentId);
+                    agentElement.classList.add('selected');
+                }
+            }
+            
+            createChannel() {
+                const channelName = document.getElementById('channelName').value.trim();
+                const channelDescription = document.getElementById('channelDescription').value.trim();
+                
+                if (!channelName || this.selectedAgents.length < 2) {
+                    this.showNotification('Please provide a name and select 2 agents', 'error');
+                    return;
+                }
+                
+                const channel = {
+                    id: 'channel_' + Date.now(),
+                    name: channelName,
+                    description: channelDescription,
+                    agents: this.selectedAgents,
+                    status: 'ACTIVE',
+                    messages: [],
+                    fileQueue: []
+                };
+                
+                this.channels.push(channel);
+                this.renderChannels();
+                this.saveChannels();
+                
+                // Close modal
+                bootstrap.Modal.getInstance(document.getElementById('createChannelModal')).hide();
+                
+                // Clear form
+                document.getElementById('channelName').value = '';
+                document.getElementById('channelDescription').value = '';
+                this.selectedAgents = [];
+                document.querySelectorAll('.agent-option').forEach(el => el.classList.remove('selected'));
+                
+                this.showNotification('Channel created successfully!', 'success');
+            }
+            
+            clearChannel() {
+                if (!this.currentChannel) return;
+                
+                if (confirm('Are you sure you want to clear this channel?')) {
+                    this.currentChannel.messages = [];
+                    this.currentChannel.fileQueue = [];
+                    this.loadChannelMessages();
+                    this.showFileQueue();
+                    this.saveChannels();
+                    this.showNotification('Channel cleared', 'info');
+                }
+            }
+            
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+            
+            showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.style.background = type === 'error' ? 'var(--wolfie-red)' : 
+                                               type === 'success' ? 'var(--wolfie-green)' : 
+                                               type === 'warning' ? 'var(--wolfie-gold)' : 'var(--wolfie-blue)';
+                notification.textContent = message;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
+            
+            saveChannels() {
+                localStorage.setItem('wolfie_channels', JSON.stringify(this.channels));
+            }
+            
+            saveBacklog() {
+                localStorage.setItem('wolfie_backlog', JSON.stringify(this.backlogFiles));
+            }
+            
+            setupEventListeners() {
+                // Enter key to send message
+                document.getElementById('messageInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+            }
+        }
+        
+        // Initialize the channel manager
+        const channelManager = new AgentChannelManager();
+        
+        // Global functions for HTML onclick events
+        function sendMessage() {
+            channelManager.sendMessage();
+        }
+        
+        function addFileToChannel() {
+            channelManager.addFileToChannel();
+        }
+        
+        function clearChannel() {
+            channelManager.clearChannel();
+        }
+        
+        function showCreateChannelModal() {
+            channelManager.showCreateChannelModal();
+        }
+        
+        function createChannel() {
+            channelManager.createChannel();
+        }
+        
+        function processBacklog() {
+            channelManager.processBacklog();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+    "meeting_68d6a5fb688d7": {
+        "id": "meeting_68d6a5fb688d7",
+        "type": "test_meeting",
+        "participants": [
+            "captain_wolfie",
+            "cursor",
+            "ara"
+        ],
+        "agenda": [
+            "Test the system",
+            "Verify functionality"
+        ],
+        "context": [
+            "test_drive",
+            "captain_verification"
+        ],
+        "status": "completed",
+        "created_at": "2025-09-26 14:40:59",
+        "patterns_detected": [],
+        "insights": [],
+        "action_items": [],
+        "project_updates": [],
+        "topics": [
+            "meeting"
+        ],
+        "decisions": [],
+        "concerns": [],
+        "completed_at": "2025-09-26 14:40:59"
+    }
+}

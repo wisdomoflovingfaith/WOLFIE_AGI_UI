@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WOLFIE AGI UI - Superpositionally Header Search</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --wolfie-green: #15803d;
+            --wolfie-gold: #fbbf24;
+            --wolfie-blue: #3b82f6;
+            --wolfie-purple: #8b5cf6;
+            --wolfie-red: #ef4444;
+            --wolfie-gray: #6b7280;
+            --wolfie-dark: #1f2937;
+        }
+
+        body {
+            background: linear-gradient(135deg, rgba(21, 128, 61, 0.05), rgba(59, 130, 246, 0.05));
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            color: var(--wolfie-green) !important;
+        }
+
+        .file-tree {
+            border-right: 2px solid var(--wolfie-green);
+            background: linear-gradient(180deg, #f8f9fa, #e9ecef);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .search-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            border: 2px solid var(--wolfie-green);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar:focus {
+            border-color: var(--wolfie-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-wolfie {
+            background: linear-gradient(135deg, var(--wolfie-green), var(--wolfie-blue));
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-wolfie:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(21, 128, 61, 0.3);
+        }
+
+        .file-item {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 6px;
+            margin-bottom: 4px;
+        }
+
+        .file-item:hover {
+            background: linear-gradient(135deg, rgba(21, 128, 61, 0.1), rgba(59, 130, 246, 0.1));
+            transform: translateX(4px);
+        }
+
+        .header-badge {
+            background: var(--wolfie-green);
+            color: white;
+            font-size: 0.75em;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-right: 6px;
+            font-weight: 600;
+        }
+
+        .header-badge.who { background: var(--wolfie-blue); }
+        .header-badge.what { background: var(--wolfie-purple); }
+        .header-badge.where { background: var(--wolfie-gold); color: var(--wolfie-dark); }
+        .header-badge.when { background: var(--wolfie-red); }
+        .header-badge.why { background: var(--wolfie-gray); }
+        .header-badge.how { background: var(--wolfie-green); }
+
+        .search-results {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .file-details {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, var(--wolfie-green), var(--wolfie-blue));
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-section {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .agent-status {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .agent-status .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-dot.active { background: var(--wolfie-green); }
+        .status-dot.inactive { background: var(--wolfie-gray); }
+        .status-dot.busy { background: var(--wolfie-red); }
+
+        .meeting-mode {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
+            border: 2px solid var(--wolfie-purple);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .no-casino-mode {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(251, 191, 36, 0.1));
+            border: 2px solid var(--wolfie-red);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .superpositionally-view {
+            background: linear-gradient(135deg, rgba(21, 128, 61, 0.1), rgba(139, 92, 246, 0.1));
+            border: 2px solid var(--wolfie-green);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--wolfie-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .file-type-icon {
+            margin-right: 8px;
+            color: var(--wolfie-gray);
+        }
+
+        .search-highlight {
+            background: var(--wolfie-gold);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .agape-principles {
+            background: linear-gradient(135deg, rgba(21, 128, 61, 0.1), rgba(59, 130, 246, 0.1));
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .principle {
+            display: inline-block;
+            background: var(--wolfie-green);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin: 2px;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-wolf-pack-battalion"></i> WOLFIE AGI UI
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text">
+                    <i class="fas fa-circle text-success"></i> System Online
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Left Panel: File Tree and Filters -->
+            <div class="col-lg-3 file-tree">
+                <h4 class="mb-4">
+                    <i class="fas fa-folder-tree text-success"></i> File Explorer
+                </h4>
+                
+                <!-- AGAPE Principles -->
+                <div class="agape-principles">
+                    <h6 class="mb-2"><i class="fas fa-heart text-danger"></i> AGAPE Principles</h6>
+                    <div>
+                        <span class="principle">Love</span>
+                        <span class="principle">Patience</span>
+                        <span class="principle">Kindness</span>
+                        <span class="principle">Humility</span>
+                        <span class="principle">Excellence</span>
+                    </div>
+                </div>
+
+                <!-- File Type Filter -->
+                <div class="filter-section">
+                    <h6 class="mb-3"><i class="fas fa-filter"></i> File Type Filter</h6>
+                    <select class="form-select form-select-sm" id="fileTypeFilter">
+                        <option value="all">All Files</option>
+                        <option value=".md">Markdown</option>
+                        <option value=".txt">Text</option>
+                        <option value=".php">PHP</option>
+                        <option value=".py">Python</option>
+                        <option value=".html">HTML</option>
+                        <option value=".css">CSS</option>
+                        <option value=".js">JavaScript</option>
+                    </select>
+                </div>
+
+                <!-- Header Type Filter -->
+                <div class="filter-section">
+                    <h6 class="mb-3"><i class="fas fa-tags"></i> Header Filter</h6>
+                    <select class="form-select form-select-sm" id="headerFilter">
+                        <option value="all">All Headers</option>
+                        <option value="WHO">WHO</option>
+                        <option value="WHAT">WHAT</option>
+                        <option value="WHERE">WHERE</option>
+                        <option value="WHEN">WHEN</option>
+                        <option value="WHY">WHY</option>
+                        <option value="HOW">HOW</option>
+                        <option value="PURPOSE">PURPOSE</option>
+                        <option value="KEY">KEY</option>
+                        <option value="TITLE">TITLE</option>
+                        <option value="ID">ID</option>
+                        <option value="SUPERPOSITIONALLY">SUPERPOSITIONALLY</option>
+                        <option value="DATE">DATE</option>
+                    </select>
+                </div>
+
+                <!-- Bridge Crew Status -->
+                <div class="filter-section">
+                    <h6 class="mb-3"><i class="fas fa-users"></i> Bridge Crew Status</h6>
+                    <div id="bridgeCrewStatus">
+                        <div class="agent-status">
+                            <span class="status-dot active"></span>
+                            <span class="small">Captain WOLFIE</span>
+                        </div>
+                        <div class="agent-status">
+                            <span class="status-dot active"></span>
+                            <span class="small">CURSOR</span>
+                        </div>
+                        <div class="agent-status">
+                            <span class="status-dot active"></span>
+                            <span class="small">COPILOT</span>
+                        </div>
+                        <div class="agent-status">
+                            <span class="status-dot active"></span>
+                            <span class="small">GEMINI</span>
+                        </div>
+                        <div class="agent-status">
+                            <span class="status-dot active"></span>
+                            <span class="small">GROK</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- File List -->
+                <div class="mt-4">
+                    <h6 class="mb-3"><i class="fas fa-list"></i> Recent Files</h6>
+                    <div id="file-list" class="list-group list-group-flush">
+                        <div class="list-group-item small text-muted">
+                            <div class="loading-spinner"></div> Loading files...
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Panel: Search and Results -->
+            <div class="col-lg-9">
+                <!-- Search Container -->
+                <div class="search-container">
+                    <h5 class="mb-4">
+                        <i class="fas fa-search"></i> Superpositionally Header Search
+                    </h5>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <div class="input-group">
+                                <input type="text" class="form-control search-bar" id="searchInput" 
+                                       placeholder="Search by WHO, WHAT, WHERE, WHEN, WHY, TITLE, ID, SUPERPOSITIONALLY, DATE...">
+                                <button class="btn btn-wolfie" id="searchBtn">
+                                    <i class="fas fa-search"></i> Search
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" id="searchField">
+                                <option value="all">All Fields</option>
+                                <option value="title">TITLE</option>
+                                <option value="who">WHO</option>
+                                <option value="what">WHAT</option>
+                                <option value="where">WHERE</option>
+                                <option value="when">WHEN</option>
+                                <option value="why">WHY</option>
+                                <option value="how">HOW</option>
+                                <option value="purpose">PURPOSE</option>
+                                <option value="key">KEY</option>
+                                <option value="superpositionally">SUPERPOSITIONALLY</option>
+                                <option value="date">DATE</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="sortBy" class="form-label small">Sort By:</label>
+                            <select class="form-select form-select-sm" id="sortBy">
+                                <option value="last_modified">Last Modified</option>
+                                <option value="title">TITLE</option>
+                                <option value="who">WHO</option>
+                                <option value="date">DATE</option>
+                                <option value="relevance">Relevance</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="resultsPerPage" class="form-label small">Results Per Page:</label>
+                            <select class="form-select form-select-sm" id="resultsPerPage">
+                                <option value="10">10</option>
+                                <option value="25" selected>25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search Results -->
+                <div class="row">
+                    <div class="col-12">
+                        <h6 class="mb-3">
+                            <i class="fas fa-list-alt"></i> Search Results
+                            <span id="resultsCount" class="badge bg-secondary ms-2">0</span>
+                        </h6>
+                        <div id="searchResults" class="search-results">
+                            <div class="file-item text-muted text-center py-4">
+                                <i class="fas fa-search fa-2x mb-3"></i>
+                                <p>Enter a search term to find files by superpositionally headers...</p>
+                                <small class="text-muted">Search across WHO, WHAT, WHERE, WHEN, WHY, HOW, PURPOSE, KEY, TITLE, ID, SUPERPOSITIONALLY, DATE</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- File Details -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <h6 class="mb-3">
+                            <i class="fas fa-info-circle"></i> File Details
+                        </h6>
+                        <div id="fileDetails" class="file-details">
+                            <div class="text-muted text-center py-4">
+                                <i class="fas fa-file-alt fa-2x mb-3"></i>
+                                <p>Select a file to view detailed information...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Meeting Mode -->
+                <div class="meeting-mode" id="meetingMode" style="display: none;">
+                    <h6 class="mb-3">
+                        <i class="fas fa-users-cog"></i> Meeting Mode - Pattern Learning
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Active Agents</h6>
+                            <div id="activeAgents"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Pattern Analysis</h6>
+                            <div id="patternAnalysis"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- No-Casino Mode -->
+                <div class="no-casino-mode" id="noCasinoMode" style="display: none;">
+                    <h6 class="mb-3">
+                        <i class="fas fa-briefcase"></i> No-Casino Mode - Upwork Gig Management
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Active Gigs</h6>
+                            <div id="activeGigs"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Progress Tracking</h6>
+                            <div id="progressTracking"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Superpositionally View -->
+                <div class="superpositionally-view" id="superpositionallyView" style="display: none;">
+                    <h6 class="mb-3">
+                        <i class="fas fa-project-diagram"></i> Superpositionally View - File Relationships
+                    </h6>
+                    <div id="superpositionallyGraph"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // WOLFIE AGI UI JavaScript
+        class WolfieAGIUI {
+            constructor() {
+                this.files = [];
+                this.currentResults = [];
+                this.searchHistory = [];
+                this.meetingMode = false;
+                this.noCasinoMode = false;
+                this.superpositionallyView = false;
+                this.init();
+            }
+            
+            init() {
+                this.setupEventListeners();
+                this.loadFiles();
+                this.updateBridgeCrewStatus();
+                this.startRealTimeUpdates();
+            }
+            
+            setupEventListeners() {
+                document.getElementById('searchBtn').addEventListener('click', () => this.search());
+                document.getElementById('searchInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.search();
+                });
+                document.getElementById('fileTypeFilter').addEventListener('change', () => this.filterFiles());
+                document.getElementById('headerFilter').addEventListener('change', () => this.filterFiles());
+                document.getElementById('searchField').addEventListener('change', () => this.search());
+                document.getElementById('sortBy').addEventListener('change', () => this.sortResults());
+                document.getElementById('resultsPerPage').addEventListener('change', () => this.search());
+            }
+            
+            async loadFiles() {
+                try {
+                    // Simulate loading files from WOLFIE AGI system
+                    this.files = await this.fetchFilesFromSystem();
+                    this.displayFiles();
+                } catch (error) {
+                    console.error('Error loading files:', error);
+                    this.showMessage('Error loading files: ' + error.message, 'danger');
+                    // Fallback to mock data
+                    this.files = this.getMockFiles();
+                    this.displayFiles();
+                }
+            }
+            
+            async fetchFilesFromSystem() {
+                // This would connect to the actual WOLFIE AGI system
+                // For now, return mock data
+                return this.getMockFiles();
+            }
+            
+            getMockFiles() {
+                return [
+                    {
+                        path: 'C:\\START\\WOLFIE_AGI_UI\\README.md',
+                        title: 'WOLFIE AGI UI - Superpositionally Header Search Interface',
+                        who: 'Eric Robin Gerdes (Captain WOLFIE)',
+                        what: 'Complete user interface system for WOLFIE AGI with cursor-like search',
+                        where: 'C:\\START\\WOLFIE_AGI_UI\\ - Local file storage (NO CLOUD SERVICES)',
+                        when: '2025-09-26 08:17:00 CDT',
+                        why: 'To create a comprehensive interface system for managing WOLFIE AGI ecosystem',
+                        how: 'Through HTML5, CSS3, JavaScript, and PHP integration with WOLFIE AGI core systems',
+                        purpose: 'Provide intuitive interface for managing WOLFIE AGI ecosystem',
+                        key: 'WOLFIE-AGI-UI; SUPERPOSITIONALLY-HEADERS; CURSOR-LIKE-SEARCH; MULTI-AGENT-CHAT',
+                        file_type: '.md',
+                        last_modified: '2025-09-26 08:17:00',
+                        size: '15.2 KB'
+                    },
+                    {
+                        path: 'C:\\START\\WOLFIE_AGI_UI\\core\\agi_core_engine.php',
+                        title: 'WOLFIE AGI Core Engine - UI Version',
+                        who: 'WOLFIE (Captain Eric Robin Gerdes)',
+                        what: 'Main AGI processing module - Core engine for WOLFIE AGI UI system',
+                        where: 'C:\\START\\WOLFIE_AGI_UI\\core\\',
+                        when: '2025-09-26 08:17:00 CDT',
+                        why: 'Core AGI processing engine for WOLFIE AGI UI development',
+                        how: 'PHP-based AGI core with AGAPE framework integration and UI coordination',
+                        purpose: 'Provide core AGI functionality with UI integration',
+                        key: 'AGI-CORE-UI; WOLFIE-AGI-UI; CORE-ENGINE-UI; PHP-AGI',
+                        file_type: '.php',
+                        last_modified: '2025-09-26 08:17:00',
+                        size: '8.7 KB'
+                    },
+                    {
+                        path: 'C:\\START\\WOLFIE_AGI_UI\\ui\\multi_agent_chat\\index.html',
+                        title: 'Multi-Agent Chat Interface',
+                        who: 'Eric Robin Gerdes (Captain WOLFIE)',
+                        what: 'Multi-agent coordination interface for 2-28 AI agents',
+                        where: 'C:\\START\\WOLFIE_AGI_UI\\ui\\multi_agent_chat\\',
+                        when: '2025-09-26 08:17:00 CDT',
+                        why: 'Enable coordination between multiple AI agents for project completion',
+                        how: 'WebSocket-based real-time communication with agent management',
+                        purpose: 'Coordinate multiple AI agents for complex project tasks',
+                        key: 'MULTI-AGENT-CHAT; AI-COORDINATION; WEBSOCKET; REAL-TIME',
+                        file_type: '.html',
+                        last_modified: '2025-09-26 08:17:00',
+                        size: '12.3 KB'
+                    }
+                ];
+            }
+            
+            displayFiles() {
+                const fileList = document.getElementById('file-list');
+                const fileTypeFilter = document.getElementById('fileTypeFilter').value;
+                const headerFilter = document.getElementById('headerFilter').value;
+                
+                let filteredFiles = this.files;
+                
+                if (fileTypeFilter !== 'all') {
+                    filteredFiles = filteredFiles.filter(file => file.file_type === fileTypeFilter);
+                }
+                
+                fileList.innerHTML = filteredFiles.map(file => `
+                    <div class="list-group-item file-item" onclick="wolfieUI.selectFile('${file.path}')">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="fas fa-file${this.getFileIcon(file.file_type)} file-type-icon"></i>
+                                    <span class="fw-bold">${file.title || 'Untitled'}</span>
+                                </div>
+                                <div class="small text-muted">${file.who || 'Unknown'}</div>
+                                <div class="small text-muted">${file.when || 'Unknown date'}</div>
+                            </div>
+                            <span class="badge bg-secondary">${file.file_type}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            getFileIcon(fileType) {
+                const icons = {
+                    '.md': '-markdown',
+                    '.txt': '-alt',
+                    '.php': '-code',
+                    '.py': '-code',
+                    '.html': '-code',
+                    '.css': '-code',
+                    '.js': '-code'
+                };
+                return icons[fileType] || '-alt';
+            }
+            
+            filterFiles() {
+                this.displayFiles();
+            }
+            
+            async search() {
+                const query = document.getElementById('searchInput').value;
+                const searchField = document.getElementById('searchField').value;
+                const sortBy = document.getElementById('sortBy').value;
+                const resultsPerPage = parseInt(document.getElementById('resultsPerPage').value);
+                
+                if (!query.trim()) {
+                    this.showMessage('Please enter a search term', 'warning');
+                    return;
+                }
+                
+                // Add to search history
+                this.searchHistory.unshift(query);
+                if (this.searchHistory.length > 10) {
+                    this.searchHistory.pop();
+                }
+                
+                try {
+                    // Simulate search through WOLFIE AGI system
+                    this.currentResults = await this.performSearch(query, searchField);
+                    
+                    // Sort results
+                    this.currentResults.sort((a, b) => {
+                        const aVal = a[sortBy] || '';
+                        const bVal = b[sortBy] || '';
+                        return aVal.localeCompare(bVal);
+                    });
+                    
+                    // Limit results
+                    this.currentResults = this.currentResults.slice(0, resultsPerPage);
+                    
+                    this.displaySearchResults();
+                    this.updateResultsCount();
+                } catch (error) {
+                    this.showMessage('Search error: ' + error.message, 'danger');
+                }
+            }
+            
+            async performSearch(query, searchField) {
+                // Simulate search through superpositionally headers
+                let results = this.files;
+                
+                if (searchField === 'all') {
+                    // Search across all fields
+                    results = results.filter(file => {
+                        return Object.values(file).some(value => 
+                            value && value.toString().toLowerCase().includes(query.toLowerCase())
+                        );
+                    });
+                } else {
+                    // Search specific field
+                    results = results.filter(file => {
+                        const fieldValue = file[searchField];
+                        return fieldValue && fieldValue.toString().toLowerCase().includes(query.toLowerCase());
+                    });
+                }
+                
+                // Add relevance scoring
+                results = results.map(file => ({
+                    ...file,
+                    relevance: this.calculateRelevance(file, query, searchField)
+                }));
+                
+                return results;
+            }
+            
+            calculateRelevance(file, query, searchField) {
+                let score = 0;
+                const queryLower = query.toLowerCase();
+                
+                if (searchField === 'all') {
+                    Object.values(file).forEach(value => {
+                        if (value && value.toString().toLowerCase().includes(queryLower)) {
+                            score += 1;
+                        }
+                    });
+                } else {
+                    const fieldValue = file[searchField];
+                    if (fieldValue && fieldValue.toString().toLowerCase().includes(queryLower)) {
+                        score += 2;
+                    }
+                }
+                
+                return score;
+            }
+            
+            displaySearchResults() {
+                const resultsDiv = document.getElementById('searchResults');
+                
+                if (this.currentResults.length === 0) {
+                    resultsDiv.innerHTML = `
+                        <div class="file-item text-muted text-center py-4">
+                            <i class="fas fa-search fa-2x mb-3"></i>
+                            <p>No results found for your search</p>
+                            <small>Try different keywords or check your spelling</small>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                resultsDiv.innerHTML = this.currentResults.map(file => `
+                    <div class="file-item" onclick="wolfieUI.selectFile('${file.path}')">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-file${this.getFileIcon(file.file_type)} file-type-icon"></i>
+                                    <strong>${this.highlightSearch(file.title || 'Untitled', document.getElementById('searchInput').value)}</strong>
+                                    <span class="badge bg-primary ms-2">Relevance: ${file.relevance || 0}</span>
+                                </div>
+                                <div class="small text-muted mb-2">${file.path}</div>
+                                <div class="mb-2">
+                                    ${file.who ? `<span class="header-badge who">WHO</span>${this.highlightSearch(file.who, document.getElementById('searchInput').value)}` : ''}
+                                    ${file.what ? `<span class="header-badge what">WHAT</span>${this.highlightSearch(file.what, document.getElementById('searchInput').value)}` : ''}
+                                    ${file.when ? `<span class="header-badge when">WHEN</span>${this.highlightSearch(file.when, document.getElementById('searchInput').value)}` : ''}
+                                </div>
+                                <div class="small text-info">
+                                    <i class="fas fa-clock"></i> ${file.last_modified} | 
+                                    <i class="fas fa-weight-hanging"></i> ${file.size}
+                                </div>
+                            </div>
+                            <span class="badge bg-secondary">${file.file_type}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            highlightSearch(text, query) {
+                if (!query) return text;
+                const regex = new RegExp(`(${query})`, 'gi');
+                return text.replace(regex, '<span class="search-highlight">$1</span>');
+            }
+            
+            selectFile(filePath) {
+                const file = this.files.find(f => f.path === filePath);
+                if (!file) return;
+                
+                const detailsDiv = document.getElementById('fileDetails');
+                detailsDiv.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h6 class="mb-3">
+                                <i class="fas fa-file${this.getFileIcon(file.file_type)}"></i> ${file.title || 'Untitled'}
+                            </h6>
+                            <p class="text-muted small mb-3">${file.path}</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <span class="badge bg-secondary me-2">${file.file_type}</span>
+                            <span class="badge bg-info">${file.size}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            ${file.who ? `<p class="small mb-2"><strong>WHO:</strong> ${file.who}</p>` : ''}
+                            ${file.what ? `<p class="small mb-2"><strong>WHAT:</strong> ${file.what}</p>` : ''}
+                            ${file.where ? `<p class="small mb-2"><strong>WHERE:</strong> ${file.where}</p>` : ''}
+                            ${file.when ? `<p class="small mb-2"><strong>WHEN:</strong> ${file.when}</p>` : ''}
+                        </div>
+                        <div class="col-md-6">
+                            ${file.why ? `<p class="small mb-2"><strong>WHY:</strong> ${file.why}</p>` : ''}
+                            ${file.how ? `<p class="small mb-2"><strong>HOW:</strong> ${file.how}</p>` : ''}
+                            ${file.purpose ? `<p class="small mb-2"><strong>PURPOSE:</strong> ${file.purpose}</p>` : ''}
+                            ${file.key ? `<p class="small mb-2"><strong>KEY:</strong> ${file.key}</p>` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <button class="btn btn-sm btn-outline-primary me-2" onclick="wolfieUI.openFile('${file.path}')">
+                            <i class="fas fa-external-link-alt"></i> Open File
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary me-2" onclick="wolfieUI.editFile('${file.path}')">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-sm btn-outline-info" onclick="wolfieUI.showSuperpositionallyView('${file.path}')">
+                            <i class="fas fa-project-diagram"></i> View Relationships
+                        </button>
+                    </div>
+                `;
+            }
+            
+            openFile(filePath) {
+                // In real implementation, this would open the file in the default application
+                alert(`Opening file: ${filePath}\n\n(In real implementation, this would open the file in your default editor)`);
+            }
+            
+            editFile(filePath) {
+                // In real implementation, this would open the file for editing
+                alert(`Editing file: ${filePath}\n\n(In real implementation, this would open the file in your default editor)`);
+            }
+            
+            showSuperpositionallyView(filePath) {
+                const file = this.files.find(f => f.path === filePath);
+                if (!file) return;
+                
+                // Toggle superpositionally view
+                this.superpositionallyView = !this.superpositionallyView;
+                const view = document.getElementById('superpositionallyView');
+                const graph = document.getElementById('superpositionallyGraph');
+                
+                if (this.superpositionallyView) {
+                    view.style.display = 'block';
+                    graph.innerHTML = `
+                        <div class="text-center">
+                            <h6>File Relationships for: ${file.title}</h6>
+                            <p class="text-muted">This would show the SUPERPOSITIONALLY array relationships</p>
+                            <div class="mt-3">
+                                <span class="badge bg-primary me-2">Related File 1</span>
+                                <span class="badge bg-primary me-2">Related File 2</span>
+                                <span class="badge bg-primary me-2">Related File 3</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    view.style.display = 'none';
+                }
+            }
+            
+            updateResultsCount() {
+                const count = this.currentResults.length;
+                document.getElementById('resultsCount').textContent = count;
+            }
+            
+            sortResults() {
+                if (this.currentResults.length === 0) return;
+                
+                const sortBy = document.getElementById('sortBy').value;
+                this.currentResults.sort((a, b) => {
+                    const aVal = a[sortBy] || '';
+                    const bVal = b[sortBy] || '';
+                    return aVal.localeCompare(bVal);
+                });
+                
+                this.displaySearchResults();
+            }
+            
+            updateBridgeCrewStatus() {
+                // Simulate real-time status updates
+                const agents = document.querySelectorAll('.agent-status');
+                agents.forEach(agent => {
+                    const dot = agent.querySelector('.status-dot');
+                    const statuses = ['active', 'inactive', 'busy'];
+                    const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+                    dot.className = `status-dot ${randomStatus}`;
+                });
+            }
+            
+            startRealTimeUpdates() {
+                // Update bridge crew status every 30 seconds
+                setInterval(() => {
+                    this.updateBridgeCrewStatus();
+                }, 30000);
+            }
+            
+            showMessage(message, type = 'info') {
+                const resultsDiv = document.getElementById('searchResults');
+                resultsDiv.innerHTML = `
+                    <div class="file-item text-${type} text-center py-4">
+                        <i class="fas fa-${type === 'danger' ? 'exclamation-triangle' : 'info-circle'} fa-2x mb-3"></i>
+                        <p>${message}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Initialize the WOLFIE AGI UI
+        const wolfieUI = new WolfieAGIUI();
+    </script>
+</body>
+</html>

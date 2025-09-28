@@ -1,0 +1,50 @@
+[
+  {
+    "id": "strategy_001",
+    "name": "WOLFIE AGI Product Sales",
+    "description": "Sell WOLFIE AGI as a product to other developers",
+    "type": "product_sales",
+    "potential_income": 10000,
+    "effort_level": "medium",
+    "time_to_implement": "3 months",
+    "skills_needed": ["Marketing", "Sales", "Product Development"],
+    "status": "planning",
+    "created_at": "2025-09-26 08:17:00"
+  },
+  {
+    "id": "strategy_002",
+    "name": "AGAPE Ethics Consulting",
+    "description": "Provide ethical AI consulting services",
+    "type": "consulting",
+    "potential_income": 15000,
+    "effort_level": "high",
+    "time_to_implement": "6 months",
+    "skills_needed": ["Ethics", "AI Safety", "Consulting", "Public Speaking"],
+    "status": "research",
+    "created_at": "2025-09-26 08:17:00"
+  },
+  {
+    "id": "strategy_003",
+    "name": "Superpositionally System Licensing",
+    "description": "License the superpositionally header system to other projects",
+    "type": "licensing",
+    "potential_income": 5000,
+    "effort_level": "low",
+    "time_to_implement": "1 month",
+    "skills_needed": ["Legal", "Documentation", "Marketing"],
+    "status": "ready",
+    "created_at": "2025-09-26 08:17:00"
+  },
+  {
+    "id": "strategy_004",
+    "name": "WOLFIE AGI Training Courses",
+    "description": "Create online courses teaching WOLFIE AGI principles",
+    "type": "education",
+    "potential_income": 20000,
+    "effort_level": "high",
+    "time_to_implement": "4 months",
+    "skills_needed": ["Teaching", "Video Production", "Course Design"],
+    "status": "planning",
+    "created_at": "2025-09-26 08:17:00"
+  }
+]
